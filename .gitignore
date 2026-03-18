@@ -32,5 +32,11 @@ build/
 ### VS Code ###
 .vscode/
 
+### Node / Playwright ###
+node_modules/
+playwright-report/
+test-results/
+.playwright/
+
 # Local env config
 src/main/resources/application.properties
