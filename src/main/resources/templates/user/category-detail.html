@@ -1,0 +1,380 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" th:content="${category.description}" />
+    <title th:text="${category.name} + ' - SportWear Shop'">Danh mục - SportWear Shop</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      .category-detail-page {
+        background: #f8f9fa;
+        min-height: 100vh;
+      }
+
+      /* Hero Banner */
+      .category-hero {
+        background: linear-gradient(135deg, rgba(0, 123, 255, 0.9), rgba(0, 86, 179, 0.9));
+        color: white;
+        padding: 60px 20px;
+        text-align: center;
+      }
+
+      .category-hero h1 {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        font-weight: 700;
+      }
+
+      .category-hero p {
+        font-size: 1.1rem;
+        opacity: 0.95;
+        max-width: 600px;
+        margin: 0 auto 20px;
+      }
+
+      .breadcrumb {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        font-size: 0.95rem;
+        opacity: 0.9;
+      }
+
+      .breadcrumb a {
+        color: white;
+        text-decoration: none;
+      }
+
+      .breadcrumb a:hover {
+        text-decoration: underline;
+      }
+
+      /* Content Container */
+      .category-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 50px 20px;
+      }
+
+      /* Sub Categories */
+      .sub-categories-section {
+        margin-bottom: 50px;
+      }
+
+      .section-title {
+        font-size: 1.5rem;
+        color: #333;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .section-title i {
+        color: #007bff;
+      }
+
+      .sub-categories-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+
+      .sub-category-card {
+        background: white;
+        padding: 15px 25px;
+        border-radius: 12px;
+        text-decoration: none;
+        color: #333;
+        font-weight: 600;
+        box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .sub-category-card:hover {
+        background: #007bff;
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 123, 255, 0.3);
+      }
+
+      .sub-category-card i {
+        font-size: 0.9rem;
+      }
+
+      /* Products Grid */
+      .products-section h2 {
+        font-size: 1.5rem;
+        color: #333;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .products-section h2 i {
+        color: #007bff;
+      }
+
+      .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 25px;
+      }
+
+      .product-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+      }
+
+      .product-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      .product-card .product-image {
+        height: 250px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .product-card .product-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+      }
+
+      .product-card:hover .product-image img {
+        transform: scale(1.08);
+      }
+
+      .product-card .product-info {
+        padding: 20px;
+      }
+
+      .product-card .product-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 10px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .product-card .product-name a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .product-card .product-name a:hover {
+        color: #007bff;
+      }
+
+      .product-card .product-price {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .product-card .price-current {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #e74a3b;
+      }
+
+      .product-card .price-old {
+        font-size: 0.95rem;
+        color: #999;
+        text-decoration: line-through;
+      }
+
+      .product-card .btn-add-cart {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        margin-top: 15px;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-align: center;
+        text-decoration: none;
+      }
+
+      .product-card .btn-add-cart:hover {
+        box-shadow: 0 5px 20px rgba(0, 123, 255, 0.4);
+      }
+
+      /* Empty Products */
+      .empty-products {
+        text-align: center;
+        padding: 80px 20px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      .empty-products i {
+        font-size: 4rem;
+        color: #ddd;
+        margin-bottom: 20px;
+      }
+
+      .empty-products h3 {
+        color: #333;
+        margin-bottom: 10px;
+      }
+
+      .empty-products p {
+        color: #6c757d;
+        margin-bottom: 25px;
+      }
+
+      .empty-products .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 25px;
+        background: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s;
+      }
+
+      .empty-products .btn-back:hover {
+        background: #0056b3;
+      }
+
+      @media (max-width: 768px) {
+        .category-hero h1 {
+          font-size: 1.8rem;
+        }
+
+        .products-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 15px;
+        }
+
+        .product-card .product-image {
+          height: 180px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .products-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body class="category-detail-page">
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <!-- Hero Banner -->
+    <section class="category-hero">
+      <div class="breadcrumb">
+        <a th:href="@{/}">Trang chủ</a>
+        <span>/</span>
+        <a th:href="@{/categories}">Danh mục</a>
+        <span>/</span>
+        <span th:text="${category.name}">Danh mục</span>
+      </div>
+      <h1 th:text="${category.name}">Tên danh mục</h1>
+      <p th:text="${category.description != null ? category.description : 'Khám phá các sản phẩm chất lượng cao trong danh mục này'}">
+        Mô tả danh mục
+      </p>
+    </section>
+
+    <div class="category-content">
+      <!-- Sub Categories -->
+      <div th:if="${subCategories != null && subCategories.size() > 0}" class="sub-categories-section">
+        <h2 class="section-title">
+          <i class="fas fa-layer-group"></i> Danh mục con
+        </h2>
+        <div class="sub-categories-grid">
+          <a th:each="sub : ${subCategories}"
+             th:href="@{/products/category/{id}(id=${sub.id})}"
+             class="sub-category-card">
+            <i class="fas fa-folder"></i>
+            <span th:text="${sub.name}">Sub category</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Products Section -->
+      <section class="products-section">
+        <h2>
+          <i class="fas fa-box"></i>
+          Sản phẩm trong danh mục
+          <span th:text="'(' + ${products.size()} + ')'"></span>
+        </h2>
+
+        <!-- Products Grid -->
+        <div th:if="${products != null && products.size() > 0}" class="products-grid">
+          <div th:each="product : ${products}" class="product-card">
+            <div class="product-image">
+              <a th:href="@{/products/{id}(id=${product.id})}">
+                <img th:src="${product.image}" th:alt="${product.name}" />
+              </a>
+            </div>
+            <div class="product-info">
+              <h3 class="product-name">
+                <a th:href="@{/products/{id}(id=${product.id})}" th:text="${product.name}">
+                  Tên sản phẩm
+                </a>
+              </h3>
+              <div class="product-price">
+                <span th:if="${product.salePrice != null}" class="price-current"
+                      th:text="${#numbers.formatDecimal(product.salePrice, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                  500,000 đ
+                </span>
+                <span th:unless="${product.salePrice != null}" class="price-current"
+                      th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                  500,000 đ
+                </span>
+                <span th:if="${product.salePrice != null}" class="price-old"
+                      th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                  600,000 đ
+                </span>
+              </div>
+              <a th:href="@{/products/{id}(id=${product.id})}" class="btn-add-cart">
+                <i class="fas fa-eye"></i> Xem chi tiết
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty Products -->
+        <div th:if="${products == null || products.size() == 0}" class="empty-products">
+          <i class="fas fa-box-open"></i>
+          <h3>Chưa có sản phẩm</h3>
+          <p>Danh mục này chưa có sản phẩm nào. Hãy quay lại sau nhé!</p>
+          <a th:href="@{/categories}" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Xem danh mục khác
+          </a>
+        </div>
+      </section>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+  </body>
+</html>

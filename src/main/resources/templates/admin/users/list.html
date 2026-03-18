@@ -1,0 +1,334 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản lý người dùng - SportWear Admin</title>
+    <link rel="stylesheet" th:href="@{/css/admin-style.css}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Topbar -->
+      <div class="topbar">
+        <h4><i class="fas fa-users"></i> Quản lý người dùng</h4>
+        <div class="user-info">
+          <span
+            >Tổng: <strong th:text="${totalItems}">0</strong> người dùng</span
+          >
+        </div>
+      </div>
+
+      <!-- Alert Messages -->
+      <div
+        th:if="${successMessage}"
+        class="alert alert-success"
+        style="
+          padding: 15px;
+          margin-bottom: 20px;
+          background-color: #d4edda;
+          border: 1px solid #c3e6cb;
+          border-radius: 5px;
+          color: #155724;
+        "
+      >
+        <i class="fas fa-check-circle"></i>
+        <span th:text="${successMessage}"></span>
+      </div>
+      <div
+        th:if="${errorMessage}"
+        class="alert alert-danger"
+        style="
+          padding: 15px;
+          margin-bottom: 20px;
+          background-color: #f8d7da;
+          border: 1px solid #f5c6cb;
+          border-radius: 5px;
+          color: #721c24;
+        "
+      >
+        <i class="fas fa-exclamation-circle"></i>
+        <span th:text="${errorMessage}"></span>
+      </div>
+
+      <!-- Users Table -->
+      <div
+        class="card"
+        style="
+          background: white;
+          padding: 20px;
+          border-radius: 10px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        "
+      >
+        <div style="overflow-x: auto">
+          <table style="width: 100%; border-collapse: collapse">
+            <thead>
+              <tr style="background: #f8f9fc">
+                <th
+                  style="
+                    padding: 15px;
+                    text-align: left;
+                    border-bottom: 2px solid #e3e6f0;
+                  "
+                >
+                  ID
+                </th>
+                <th
+                  style="
+                    padding: 15px;
+                    text-align: left;
+                    border-bottom: 2px solid #e3e6f0;
+                  "
+                >
+                  Thông tin
+                </th>
+                <th
+                  style="
+                    padding: 15px;
+                    text-align: left;
+                    border-bottom: 2px solid #e3e6f0;
+                  "
+                >
+                  Email
+                </th>
+                <th
+                  style="
+                    padding: 15px;
+                    text-align: left;
+                    border-bottom: 2px solid #e3e6f0;
+                  "
+                >
+                  SĐT
+                </th>
+                <th
+                  style="
+                    padding: 15px;
+                    text-align: center;
+                    border-bottom: 2px solid #e3e6f0;
+                  "
+                >
+                  Quyền
+                </th>
+                <th
+                  style="
+                    padding: 15px;
+                    text-align: center;
+                    border-bottom: 2px solid #e3e6f0;
+                  "
+                >
+                  Trạng thái
+                </th>
+                <th
+                  style="
+                    padding: 15px;
+                    text-align: center;
+                    border-bottom: 2px solid #e3e6f0;
+                  "
+                >
+                  Ngày tạo
+                </th>
+                <th
+                  style="
+                    padding: 15px;
+                    text-align: center;
+                    border-bottom: 2px solid #e3e6f0;
+                  "
+                >
+                  Hành động
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                th:each="user : ${users}"
+                style="border-bottom: 1px solid #e3e6f0"
+              >
+                <td style="padding: 15px" th:text="${user.id}">#1</td>
+                <td style="padding: 15px">
+                  <div style="display: flex; align-items: center; gap: 10px">
+                    <div
+                      style="
+                        width: 40px;
+                        height: 40px;
+                        border-radius: 50%;
+                        background: #4e73df;
+                        color: white;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-weight: bold;
+                      "
+                      th:text="${user.fullName != null ? user.fullName.substring(0, 1).toUpperCase() : user.username.substring(0, 1).toUpperCase()}"
+                    >
+                      A
+                    </div>
+                    <div>
+                      <strong
+                        th:text="${user.fullName != null ? user.fullName : user.username}"
+                        >Tên người dùng</strong
+                      >
+                      <p
+                        style="margin: 0; font-size: 0.85rem; color: #858796"
+                        th:text="'@' + ${user.username}"
+                      >
+                        @username
+                      </p>
+                    </div>
+                  </div>
+                </td>
+                <td style="padding: 15px" th:text="${user.email}">
+                  email@example.com
+                </td>
+                <td
+                  style="padding: 15px"
+                  th:text="${user.phone != null ? user.phone : '—'}"
+                >
+                  0123456789
+                </td>
+                <td style="padding: 15px; text-align: center">
+                  <span
+                    th:each="role : ${user.roles}"
+                    th:text="${role.name.replace('ROLE_', '')}"
+                    th:style="${role.name == 'ROLE_ADMIN' ? 'background: #e74a3b; color: white; padding: 3px 10px; border-radius: 20px; font-size: 0.8rem; margin: 2px;' : 'background: #4e73df; color: white; padding: 3px 10px; border-radius: 20px; font-size: 0.8rem; margin: 2px;'}"
+                  >
+                    USER
+                  </span>
+                </td>
+                <td style="padding: 15px; text-align: center">
+                  <span
+                    th:if="${user.enabled}"
+                    style="
+                      background: #1cc88a;
+                      color: white;
+                      padding: 5px 15px;
+                      border-radius: 20px;
+                      font-size: 0.85rem;
+                    "
+                  >
+                    <i class="fas fa-check"></i> Hoạt động
+                  </span>
+                  <span
+                    th:unless="${user.enabled}"
+                    style="
+                      background: #e74a3b;
+                      color: white;
+                      padding: 5px 15px;
+                      border-radius: 20px;
+                      font-size: 0.85rem;
+                    "
+                  >
+                    <i class="fas fa-ban"></i> Bị khóa
+                  </span>
+                </td>
+                <td
+                  style="padding: 15px; text-align: center"
+                  th:text="${user.createdAt != null ? #temporals.format(user.createdAt, 'dd/MM/yyyy') : '—'}"
+                >
+                  01/01/2024
+                </td>
+                <td style="padding: 15px; text-align: center">
+                  <a
+                    th:href="@{/admin/users/{id}(id=${user.id})}"
+                    style="
+                      padding: 8px 12px;
+                      background: #36b9cc;
+                      color: white;
+                      border-radius: 5px;
+                      text-decoration: none;
+                      margin-right: 5px;
+                    "
+                    title="Xem chi tiết"
+                  >
+                    <i class="fas fa-eye"></i>
+                  </a>
+                  <form
+                    th:action="@{/admin/users/toggle-status/{id}(id=${user.id})}"
+                    method="post"
+                    style="display: inline"
+                  >
+                    <button
+                      type="submit"
+                      th:style="${user.enabled ? 'padding: 8px 12px; background: #f6c23e; color: white; border: none; border-radius: 5px; cursor: pointer;' : 'padding: 8px 12px; background: #1cc88a; color: white; border: none; border-radius: 5px; cursor: pointer;'}"
+                      th:title="${user.enabled ? 'Khóa tài khoản' : 'Mở khóa tài khoản'}"
+                    >
+                      <i
+                        th:class="${user.enabled ? 'fas fa-lock' : 'fas fa-unlock'}"
+                      ></i>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              <tr th:if="${#lists.isEmpty(users)}">
+                <td
+                  colspan="8"
+                  style="padding: 30px; text-align: center; color: #858796"
+                >
+                  <i
+                    class="fas fa-users"
+                    style="font-size: 3rem; margin-bottom: 15px"
+                  ></i>
+                  <p>Không có người dùng nào</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div
+          th:if="${totalPages > 1}"
+          style="
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+          "
+        >
+          <a
+            th:if="${currentPage > 0}"
+            th:href="@{/admin/users(page=${currentPage - 1})}"
+            style="
+              padding: 8px 15px;
+              border: 1px solid #ddd;
+              border-radius: 5px;
+              text-decoration: none;
+              color: #4e73df;
+            "
+          >
+            <i class="fas fa-chevron-left"></i>
+          </a>
+          <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+            <a
+              th:href="@{/admin/users(page=${i})}"
+              th:text="${i + 1}"
+              th:style="${i == currentPage} ? 'padding: 8px 15px; border: 1px solid #4e73df; border-radius: 5px; text-decoration: none; background: #4e73df; color: white;' : 'padding: 8px 15px; border: 1px solid #ddd; border-radius: 5px; text-decoration: none; color: #4e73df;'"
+            >
+              1
+            </a>
+          </span>
+          <a
+            th:if="${currentPage < totalPages - 1}"
+            th:href="@{/admin/users(page=${currentPage + 1})}"
+            style="
+              padding: 8px 15px;
+              border: 1px solid #ddd;
+              border-radius: 5px;
+              text-decoration: none;
+              color: #4e73df;
+            "
+          >
+            <i class="fas fa-chevron-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

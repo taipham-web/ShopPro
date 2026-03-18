@@ -1,0 +1,693 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Giới thiệu - SportWear Shop</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      .about-page {
+        background: #f8f9fa;
+      }
+
+      /* Hero Section */
+      .about-hero {
+        background:
+          linear-gradient(
+            135deg,
+            rgba(0, 123, 255, 0.9),
+            rgba(0, 86, 179, 0.9)
+          ),
+          url("/images/banners/about-hero.jpg") center/cover;
+        color: white;
+        padding: 100px 20px;
+        text-align: center;
+      }
+
+      .about-hero h1 {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        font-weight: 700;
+      }
+
+      .about-hero p {
+        font-size: 1.2rem;
+        max-width: 700px;
+        margin: 0 auto;
+        opacity: 0.95;
+      }
+
+      /* Content Sections */
+      .about-section {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 80px 20px;
+      }
+
+      .section-title {
+        text-align: center;
+        margin-bottom: 50px;
+      }
+
+      .section-title h2 {
+        font-size: 2.2rem;
+        color: #333;
+        margin-bottom: 15px;
+        position: relative;
+        display: inline-block;
+      }
+
+      .section-title h2::after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 4px;
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        border-radius: 2px;
+      }
+
+      .section-title p {
+        color: #6c757d;
+        font-size: 1.1rem;
+        max-width: 600px;
+        margin: 20px auto 0;
+      }
+
+      /* Story Section */
+      .story-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 60px;
+        align-items: center;
+      }
+
+      .story-image {
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      }
+
+      .story-image img {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+      }
+
+      .story-content h3 {
+        font-size: 1.8rem;
+        color: #333;
+        margin-bottom: 20px;
+      }
+
+      .story-content p {
+        color: #555;
+        line-height: 1.8;
+        margin-bottom: 15px;
+      }
+
+      /* Stats Section */
+      .stats-section {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        padding: 60px 20px;
+      }
+
+      .stats-grid {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 30px;
+        text-align: center;
+        color: white;
+      }
+
+      .stat-item {
+        padding: 30px 20px;
+      }
+
+      .stat-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        opacity: 0.9;
+      }
+
+      .stat-number {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+
+      .stat-label {
+        font-size: 1rem;
+        opacity: 0.9;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      /* Values Section */
+      .values-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+      }
+
+      .value-card {
+        background: white;
+        padding: 40px 30px;
+        border-radius: 16px;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s;
+      }
+
+      .value-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      }
+
+      .value-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #e7f1ff, #cce0ff);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 25px;
+        font-size: 2rem;
+        color: #007bff;
+      }
+
+      .value-card h3 {
+        font-size: 1.3rem;
+        color: #333;
+        margin-bottom: 15px;
+      }
+
+      .value-card p {
+        color: #6c757d;
+        line-height: 1.7;
+      }
+
+      /* Team Section */
+      .team-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 30px;
+      }
+
+      .team-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s;
+      }
+
+      .team-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.12);
+      }
+
+      .team-image {
+        height: 250px;
+        background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      .team-image i {
+        font-size: 5rem;
+        color: #ccc;
+      }
+
+      .team-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+      }
+
+      .team-card:hover .team-image img {
+        transform: scale(1.05);
+      }
+
+      .team-info {
+        padding: 25px;
+        text-align: center;
+      }
+
+      .team-info h4 {
+        font-size: 1.1rem;
+        color: #333;
+        margin-bottom: 5px;
+      }
+
+      .team-info .position {
+        color: #007bff;
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+      }
+
+      .team-social {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+      }
+
+      .team-social a {
+        width: 36px;
+        height: 36px;
+        background: #f0f0f0;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #666;
+        transition: all 0.3s;
+      }
+
+      .team-social a:hover {
+        background: #007bff;
+        color: white;
+      }
+
+      /* Partners Section */
+      .partners-section {
+        background: white;
+        padding: 60px 20px;
+      }
+
+      .partners-logos {
+        max-width: 1000px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 60px;
+        flex-wrap: wrap;
+      }
+
+      .partner-logo {
+        opacity: 0.6;
+        transition: all 0.3s;
+        filter: grayscale(100%);
+      }
+
+      .partner-logo:hover {
+        opacity: 1;
+        filter: grayscale(0%);
+      }
+
+      .partner-logo img {
+        max-height: 60px;
+        max-width: 150px;
+      }
+
+      /* CTA Section */
+      .cta-section {
+        background: #333;
+        color: white;
+        padding: 80px 20px;
+        text-align: center;
+      }
+
+      .cta-section h2 {
+        font-size: 2.2rem;
+        margin-bottom: 20px;
+      }
+
+      .cta-section p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 0 auto 30px;
+      }
+
+      .cta-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+      }
+
+      .btn-cta {
+        padding: 15px 35px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .btn-cta-primary {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        color: white;
+      }
+
+      .btn-cta-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0, 123, 255, 0.4);
+      }
+
+      .btn-cta-outline {
+        border: 2px solid white;
+        color: white;
+      }
+
+      .btn-cta-outline:hover {
+        background: white;
+        color: #333;
+      }
+
+      @media (max-width: 992px) {
+        .story-grid {
+          grid-template-columns: 1fr;
+          gap: 40px;
+        }
+
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .values-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .team-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 576px) {
+        .about-hero h1 {
+          font-size: 2rem;
+        }
+
+        .stats-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .values-grid,
+        .team-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .cta-buttons {
+          flex-direction: column;
+          align-items: center;
+        }
+      }
+    </style>
+  </head>
+  <body class="about-page">
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <!-- Hero Section -->
+    <section class="about-hero">
+      <h1><i class="fas fa-running"></i> SportWear Shop</h1>
+      <p>
+        Chúng tôi mang đến những sản phẩm thể thao chất lượng cao, giúp bạn tự
+        tin chinh phục mọi thử thách trong cuộc sống
+      </p>
+    </section>
+
+    <!-- Story Section -->
+    <section class="about-section">
+      <div class="story-grid">
+        <div class="story-image">
+          <img
+            src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=600"
+            alt="Câu chuyện của chúng tôi"
+          />
+        </div>
+        <div class="story-content">
+          <h3>
+            <i
+              class="fas fa-bookmark"
+              style="color: #007bff; margin-right: 10px"
+            ></i
+            >Câu chuyện của chúng tôi
+          </h3>
+          <p>
+            SportWear Shop được thành lập vào năm 2020 với sứ mệnh mang đến
+            những sản phẩm thể thao chất lượng cao nhất cho người Việt Nam.
+            Chúng tôi tin rằng mọi người đều xứng đáng được sử dụng những trang
+            phục và phụ kiện thể thao tốt nhất.
+          </p>
+          <p>
+            Bắt đầu từ một cửa hàng nhỏ tại TP. Hồ Chí Minh, đến nay chúng tôi
+            đã phát triển thành một trong những thương hiệu bán lẻ thể thao hàng
+            đầu với hệ thống cửa hàng trên toàn quốc và nền tảng thương mại điện
+            tử hiện đại.
+          </p>
+          <p>
+            Với đội ngũ nhân viên tận tâm và chuyên nghiệp, chúng tôi cam kết
+            mang đến trải nghiệm mua sắm tuyệt vời nhất cho khách hàng.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-icon"><i class="fas fa-users"></i></div>
+          <div class="stat-number">50K+</div>
+          <div class="stat-label">Khách hàng</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-icon"><i class="fas fa-box"></i></div>
+          <div class="stat-number">10K+</div>
+          <div class="stat-label">Sản phẩm</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-icon"><i class="fas fa-store"></i></div>
+          <div class="stat-number">20+</div>
+          <div class="stat-label">Cửa hàng</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-icon"><i class="fas fa-award"></i></div>
+          <div class="stat-number">50+</div>
+          <div class="stat-label">Thương hiệu</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Values Section -->
+    <section class="about-section">
+      <div class="section-title">
+        <h2>Giá trị cốt lõi</h2>
+        <p>
+          Những giá trị mà chúng tôi luôn theo đuổi trong mọi hoạt động kinh
+          doanh
+        </p>
+      </div>
+      <div class="values-grid">
+        <div class="value-card">
+          <div class="value-icon">
+            <i class="fas fa-gem"></i>
+          </div>
+          <h3>Chất lượng</h3>
+          <p>
+            Cam kết cung cấp sản phẩm chính hãng 100% từ các thương hiệu uy tín
+            hàng đầu thế giới
+          </p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">
+            <i class="fas fa-heart"></i>
+          </div>
+          <h3>Tận tâm</h3>
+          <p>
+            Luôn đặt lợi ích của khách hàng lên hàng đầu, phục vụ với trái tim
+            và sự chân thành
+          </p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">
+            <i class="fas fa-lightbulb"></i>
+          </div>
+          <h3>Sáng tạo</h3>
+          <p>
+            Không ngừng đổi mới và cải tiến để mang đến trải nghiệm mua sắm tốt
+            nhất
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="about-section" style="background: #f8f9fa">
+      <div class="section-title">
+        <h2>Đội ngũ lãnh đạo</h2>
+        <p>Những người dẫn dắt SportWear Shop phát triển mỗi ngày</p>
+      </div>
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="team-image">
+            <img
+              th:src="@{/images/tai.jpg}"
+              alt="Phạm Huỳnh Tài"
+              onerror="
+                this.onerror = null;
+                this.src =
+                  'https://ui-avatars.com/api/?name=Phạm+Huỳnh+Tài&background=007bff&color=fff&size=250';
+              "
+            />
+          </div>
+          <div class="team-info">
+            <h4>Phạm Huỳnh Tài</h4>
+            <p class="position">CEO & Founder</p>
+            <div class="team-social">
+              <a href="#"><i class="fab fa-facebook-f"></i></a>
+              <a href="#"><i class="fab fa-linkedin-in"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <div class="team-card">
+          <div class="team-image">
+            <img
+              th:src="@{/images/phong.jpg}"
+              alt="Hồ Thái Phong"
+              onerror="
+                this.onerror = null;
+                this.src =
+                  'https://ui-avatars.com/api/?name=Hồ+Thái+Phong&background=007bff&color=fff&size=250';
+              "
+            />
+          </div>
+          <div class="team-info">
+            <h4>Hồ Thái Phong</h4>
+            <p class="position">CTO</p>
+            <div class="team-social">
+              <a href="#"><i class="fab fa-facebook-f"></i></a>
+              <a href="#"><i class="fab fa-linkedin-in"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="team-card">
+          <div class="team-image">
+            <img
+              th:src="@{/images/quan.jpg}"
+              alt="Trần Văn Quân"
+              onerror="
+                this.onerror = null;
+                this.src =
+                  'https://ui-avatars.com/api/?name=Trần+Văn+Quân&background=0056b3&color=fff&size=250';
+              "
+            />
+          </div>
+          <div class="team-info">
+            <h4>Trần Văn Quân</h4>
+            <p class="position">CMO</p>
+            <div class="team-social">
+              <a href="#"><i class="fab fa-facebook-f"></i></a>
+              <a href="#"><i class="fab fa-linkedin-in"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="team-card">
+          <div class="team-image">
+            <img
+              th:src="@{/images/bang.jpg}"
+              alt="Phan Thị Khánh Băng"
+              onerror="
+                this.onerror = null;
+                this.src =
+                  'https://ui-avatars.com/api/?name=Phan+Thị+Khánh+Băng&background=007bff&color=fff&size=250';
+              "
+            />
+          </div>
+          <div class="team-info">
+            <h4>Phan Thị Khánh Băng</h4>
+            <p class="position">Nhân viên bán hàng</p>
+            <div class="team-social">
+              <a href="#"><i class="fab fa-facebook-f"></i></a>
+              <a href="#"><i class="fab fa-linkedin-in"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="team-card">
+          <div class="team-image">
+            <img
+              th:src="@{/images/huan.jpg}"
+              alt="Vũ Đức Huân"
+              onerror="
+                this.onerror = null;
+                this.src =
+                  'https://ui-avatars.com/api/?name=Vũ+Đức+Huân&background=0056b3&color=fff&size=250';
+              "
+            />
+          </div>
+          <div class="team-info">
+            <h4>Vũ Đức Huân</h4>
+            <p class="position">Nhân viên bán hàng</p>
+            <div class="team-social">
+              <a href="#"><i class="fab fa-facebook-f"></i></a>
+              <a href="#"><i class="fab fa-linkedin-in"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="team-card">
+          <div class="team-image">
+            <img
+              th:src="@{/images/thanh_phong.jpg}"
+              alt="Dương Thanh Phong"
+              onerror="
+                this.onerror = null;
+                this.src =
+                  'https://ui-avatars.com/api/?name=Dương+Thanh+Phong&background=007bff&color=fff&size=250';
+              "
+            />
+          </div>
+          <div class="team-info">
+            <h4>Dương Thanh Phong</h4>
+            <p class="position">Nhân viên bán hàng</p>
+            <div class="team-social">
+              <a href="#"><i class="fab fa-facebook-f"></i></a>
+              <a href="#"><i class="fab fa-linkedin-in"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <h2><i class="fas fa-handshake"></i> Hãy cùng đồng hành với chúng tôi</h2>
+      <p>
+        Khám phá bộ sưu tập sản phẩm thể thao chất lượng cao và trải nghiệm dịch
+        vụ khách hàng tuyệt vời
+      </p>
+      <div class="cta-buttons">
+        <a th:href="@{/products}" class="btn-cta btn-cta-primary">
+          <i class="fas fa-shopping-bag"></i> Mua sắm ngay
+        </a>
+        <a th:href="@{/contact}" class="btn-cta btn-cta-outline">
+          <i class="fas fa-envelope"></i> Liên hệ với chúng tôi
+        </a>
+      </div>
+    </section>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+  </body>
+</html>

@@ -1,0 +1,198 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title
+      th:text="${brand.id != null ? 'Chỉnh sửa thương hiệu' : 'Thêm thương hiệu'} + ' - SportWear Admin'"
+    >
+      Thương hiệu - Admin
+    </title>
+    <link rel="stylesheet" th:href="@{/css/admin-style.css}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Topbar -->
+      <div class="topbar">
+        <h4>
+          <i class="fas fa-tags"></i>
+          <span
+            th:text="${brand.id != null ? 'Chỉnh sửa thương hiệu' : 'Thêm thương hiệu mới'}"
+            >Thương hiệu</span
+          >
+        </h4>
+        <a
+          th:href="@{/admin/brands}"
+          class="btn"
+          style="
+            padding: 8px 15px;
+            background: #858796;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+          "
+        >
+          <i class="fas fa-arrow-left"></i> Quay lại
+        </a>
+      </div>
+
+      <!-- Form -->
+      <div
+        class="card"
+        style="
+          background: white;
+          padding: 30px;
+          border-radius: 10px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+          max-width: 600px;
+        "
+      >
+        <form
+          th:action="${brand.id != null ? '/admin/brands/edit/' + brand.id : '/admin/brands/create'}"
+          method="post"
+        >
+          <!-- Name -->
+          <div style="margin-bottom: 20px">
+            <label
+              style="
+                display: block;
+                margin-bottom: 8px;
+                font-weight: bold;
+                color: #5a5c69;
+              "
+            >
+              Tên thương hiệu <span style="color: #e74a3b">*</span>
+            </label>
+            <input
+              type="text"
+              name="name"
+              th:value="${brand.name}"
+              required
+              style="
+                width: 100%;
+                padding: 12px 15px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+              "
+              placeholder="Nhập tên thương hiệu"
+            />
+          </div>
+
+          <!-- Logo URL -->
+          <div style="margin-bottom: 20px">
+            <label
+              style="
+                display: block;
+                margin-bottom: 8px;
+                font-weight: bold;
+                color: #5a5c69;
+              "
+              >URL Logo</label
+            >
+            <input
+              type="text"
+              name="logoUrl"
+              th:value="${brand.logoUrl}"
+              style="
+                width: 100%;
+                padding: 12px 15px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+              "
+              placeholder="https://example.com/logo.png"
+            />
+            <img
+              th:if="${brand.logoUrl}"
+              th:src="${brand.logoUrl}"
+              alt=""
+              style="
+                max-width: 100px;
+                margin-top: 10px;
+                background: #f8f9fc;
+                padding: 5px;
+                border-radius: 5px;
+              "
+            />
+          </div>
+
+          <!-- Description -->
+          <div style="margin-bottom: 20px">
+            <label
+              style="
+                display: block;
+                margin-bottom: 8px;
+                font-weight: bold;
+                color: #5a5c69;
+              "
+              >Mô tả</label
+            >
+            <textarea
+              name="description"
+              rows="4"
+              style="
+                width: 100%;
+                padding: 12px 15px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                resize: vertical;
+              "
+              placeholder="Nhập mô tả thương hiệu"
+              th:text="${brand.description}"
+            ></textarea>
+          </div>
+
+          <!-- Submit Button -->
+          <div
+            style="
+              margin-top: 30px;
+              padding-top: 20px;
+              border-top: 1px solid #e3e6f0;
+              display: flex;
+              gap: 15px;
+            "
+          >
+            <button
+              type="submit"
+              style="
+                padding: 12px 30px;
+                background: #1cc88a;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 1rem;
+              "
+            >
+              <i class="fas fa-save"></i>
+              <span th:text="${brand.id != null ? 'Cập nhật' : 'Thêm mới'}"
+                >Lưu</span
+              >
+            </button>
+            <a
+              th:href="@{/admin/brands}"
+              style="
+                padding: 12px 30px;
+                background: #858796;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                text-decoration: none;
+                font-size: 1rem;
+              "
+            >
+              <i class="fas fa-times"></i> Hủy
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

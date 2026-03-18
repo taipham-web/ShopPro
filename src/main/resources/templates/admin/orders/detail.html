@@ -1,0 +1,829 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chi tiết đơn hàng - SportWear Admin</title>
+    <link rel="stylesheet" th:href="@{/css/admin-style.css}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Topbar -->
+      <div class="topbar">
+        <h4>
+          <i class="fas fa-file-invoice"></i> Chi tiết đơn hàng #<span
+            th:text="${order.orderCode}"
+          ></span>
+        </h4>
+        <a
+          th:href="@{/admin/orders}"
+          class="btn"
+          style="
+            padding: 8px 15px;
+            background: #858796;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+          "
+        >
+          <i class="fas fa-arrow-left"></i> Quay lại
+        </a>
+      </div>
+
+      <!-- Alert Messages -->
+      <div
+        th:if="${successMessage}"
+        class="alert alert-success"
+        style="
+          padding: 15px;
+          margin-bottom: 20px;
+          background-color: #d4edda;
+          border: 1px solid #c3e6cb;
+          border-radius: 5px;
+          color: #155724;
+        "
+      >
+        <i class="fas fa-check-circle"></i>
+        <span th:text="${successMessage}"></span>
+      </div>
+      <div
+        th:if="${errorMessage}"
+        class="alert alert-danger"
+        style="
+          padding: 15px;
+          margin-bottom: 20px;
+          background-color: #f8d7da;
+          border: 1px solid #f5c6cb;
+          border-radius: 5px;
+          color: #721c24;
+        "
+      >
+        <i class="fas fa-exclamation-circle"></i>
+        <span th:text="${errorMessage}"></span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px">
+        <!-- Order Info -->
+        <div>
+          <!-- Customer Info -->
+          <div
+            class="card"
+            style="
+              background: white;
+              padding: 20px;
+              border-radius: 10px;
+              margin-bottom: 20px;
+              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            "
+          >
+            <h5 style="margin-bottom: 20px; color: #5a5c69">
+              <i class="fas fa-user"></i> Thông tin khách hàng
+            </h5>
+            <table style="width: 100%">
+              <tr>
+                <td style="padding: 10px 0; color: #858796; width: 150px">
+                  Người nhận:
+                </td>
+                <td
+                  style="padding: 10px 0; font-weight: bold"
+                  th:text="${order.shippingName}"
+                >
+                  Nguyễn Văn A
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 10px 0; color: #858796">Số điện thoại:</td>
+                <td style="padding: 10px 0" th:text="${order.shippingPhone}">
+                  0123456789
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 10px 0; color: #858796">Địa chỉ:</td>
+                <td style="padding: 10px 0" th:text="${order.shippingAddress}">
+                  123 Đường ABC
+                </td>
+              </tr>
+              <tr th:if="${order.note}">
+                <td style="padding: 10px 0; color: #858796">Ghi chú:</td>
+                <td
+                  style="padding: 10px 0; font-style: italic"
+                  th:text="${order.note}"
+                >
+                  Giao giờ hành chính
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <!-- Order Items -->
+          <div
+            class="card"
+            style="
+              background: white;
+              padding: 20px;
+              border-radius: 10px;
+              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            "
+          >
+            <h5 style="margin-bottom: 20px; color: #5a5c69">
+              <i class="fas fa-shopping-bag"></i> Sản phẩm đặt hàng
+            </h5>
+            <table style="width: 100%; border-collapse: collapse">
+              <thead>
+                <tr style="background: #f8f9fc">
+                  <th
+                    style="
+                      padding: 15px;
+                      text-align: left;
+                      border-bottom: 2px solid #e3e6f0;
+                    "
+                  >
+                    Sản phẩm
+                  </th>
+                  <th
+                    style="
+                      padding: 15px;
+                      text-align: right;
+                      border-bottom: 2px solid #e3e6f0;
+                    "
+                  >
+                    Đơn giá
+                  </th>
+                  <th
+                    style="
+                      padding: 15px;
+                      text-align: center;
+                      border-bottom: 2px solid #e3e6f0;
+                    "
+                  >
+                    Số lượng
+                  </th>
+                  <th
+                    style="
+                      padding: 15px;
+                      text-align: right;
+                      border-bottom: 2px solid #e3e6f0;
+                    "
+                  >
+                    Thành tiền
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  th:each="item : ${order.orderDetails}"
+                  style="border-bottom: 1px solid #e3e6f0"
+                >
+                  <td style="padding: 15px">
+                    <div style="display: flex; align-items: center; gap: 15px">
+                      <img
+                        th:src="${item.product.image}"
+                        alt=""
+                        style="
+                          width: 60px;
+                          height: 60px;
+                          object-fit: cover;
+                          border-radius: 5px;
+                        "
+                      />
+                      <div>
+                        <span th:text="${item.product.name}">Tên sản phẩm</span
+                        ><br />
+                        <span
+                          th:if="${item.size != null}"
+                          style="
+                            display: inline-block;
+                            margin-top: 4px;
+                            padding: 2px 9px;
+                            background: #f0f4ff;
+                            color: #4e73df;
+                            border-radius: 20px;
+                            font-size: 0.78rem;
+                            font-weight: 700;
+                            border: 1px solid #c9d6f5;
+                          "
+                        >
+                          Size: <span th:text="${item.size}"></span>
+                        </span>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    style="padding: 15px; text-align: right"
+                    th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"
+                  >
+                    100,000 đ
+                  </td>
+                  <td
+                    style="padding: 15px; text-align: center"
+                    th:text="${item.quantity}"
+                  >
+                    2
+                  </td>
+                  <td
+                    style="
+                      padding: 15px;
+                      text-align: right;
+                      font-weight: bold;
+                      color: #e74a3b;
+                    "
+                    th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + ' đ'"
+                  >
+                    200,000 đ
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot style="background: #f8f9fc">
+                <tr>
+                  <td
+                    colspan="3"
+                    style="padding: 15px; text-align: right; font-weight: bold"
+                  >
+                    Tạm tính:
+                  </td>
+                  <td
+                    style="padding: 15px; text-align: right"
+                    th:text="${#numbers.formatDecimal(order.totalAmount - (order.shippingFee ?: 0), 0, 'COMMA', 0, 'POINT')} + ' đ'"
+                  >
+                    500,000 đ
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    colspan="3"
+                    style="padding: 15px; text-align: right; font-weight: bold"
+                  >
+                    Phí vận chuyển:
+                  </td>
+                  <td
+                    style="padding: 15px; text-align: right"
+                    th:text="${order.shippingFee != null ? #numbers.formatDecimal(order.shippingFee, 0, 'COMMA', 0, 'POINT') + ' đ' : 'Miễn phí'}"
+                  >
+                    30,000 đ
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    colspan="3"
+                    style="
+                      padding: 15px;
+                      text-align: right;
+                      font-weight: bold;
+                      font-size: 1.1rem;
+                    "
+                  >
+                    Tổng cộng:
+                  </td>
+                  <td
+                    style="
+                      padding: 15px;
+                      text-align: right;
+                      font-weight: bold;
+                      font-size: 1.2rem;
+                      color: #e74a3b;
+                    "
+                    th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' đ'"
+                  >
+                    530,000 đ
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+
+        <!-- Order Status -->
+        <div>
+          <div
+            class="card"
+            style="
+              background: white;
+              padding: 20px;
+              border-radius: 10px;
+              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            "
+          >
+            <h5 style="margin-bottom: 20px; color: #5a5c69">
+              <i class="fas fa-info-circle"></i> Thông tin đơn hàng
+            </h5>
+
+            <div style="margin-bottom: 20px">
+              <p style="color: #858796; margin-bottom: 5px">Mã đơn hàng</p>
+              <p
+                style="font-weight: bold; font-size: 1.1rem"
+                th:text="${order.orderCode}"
+              >
+                #ORD001
+              </p>
+            </div>
+
+            <div style="margin-bottom: 20px">
+              <p style="color: #858796; margin-bottom: 5px">Ngày đặt hàng</p>
+              <p
+                th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}"
+              >
+                01/01/2024 10:00
+              </p>
+            </div>
+
+            <div style="margin-bottom: 20px">
+              <p style="color: #858796; margin-bottom: 5px">
+                Phương thức thanh toán
+              </p>
+              <p
+                th:text="${order.paymentMethod != null ? order.paymentMethod.name() : 'COD'}"
+              >
+                COD
+              </p>
+            </div>
+
+            <div style="margin-bottom: 20px">
+              <p style="color: #858796; margin-bottom: 5px">
+                Trạng thái thanh toán
+              </p>
+              <span
+                th:if="${order.paid}"
+                style="
+                  background: #1cc88a;
+                  color: white;
+                  padding: 5px 15px;
+                  border-radius: 20px;
+                "
+              >
+                <i class="fas fa-check"></i> Đã thanh toán
+              </span>
+              <span
+                th:unless="${order.paid}"
+                style="
+                  background: #f6c23e;
+                  color: white;
+                  padding: 5px 15px;
+                  border-radius: 20px;
+                "
+              >
+                <i class="fas fa-clock"></i> Chưa thanh toán
+              </span>
+            </div>
+
+            <hr style="margin: 20px 0; border-color: #e3e6f0" />
+
+            <div style="margin-bottom: 20px">
+              <p style="color: #858796; margin-bottom: 10px">
+                Trạng thái đơn hàng hiện tại
+              </p>
+              <span
+                class="badge"
+                th:classappend="${order.status.name() == 'PENDING' ? 'badge-warning' : 
+                                               order.status.name() == 'CONFIRMED' ? 'badge-info' : 
+                                               order.status.name() == 'SHIPPING' ? 'badge-primary' : 
+                                               order.status.name() == 'DELIVERED' ? 'badge-success' : 'badge-danger'}"
+                th:text="${order.status.name() == 'PENDING' ? 'Chờ xác nhận' : 
+                                        order.status.name() == 'CONFIRMED' ? 'Đã xác nhận' : 
+                                        order.status.name() == 'SHIPPING' ? 'Đang giao hàng' : 
+                                        order.status.name() == 'DELIVERED' ? 'Đã giao hàng' : 'Đã hủy'}"
+                style="padding: 8px 20px; border-radius: 20px; font-size: 1rem"
+              >
+                Pending
+              </span>
+            </div>
+
+            <!-- Update Status Form -->
+            <form
+              id="statusForm"
+              th:action="@{/admin/orders/{id}/status(id=${order.id})}"
+              method="post"
+            >
+              <input
+                type="hidden"
+                name="status"
+                id="selectedStatus"
+                th:value="${order.status.name()}"
+              />
+
+              <div style="margin-bottom: 15px">
+                <label
+                  style="
+                    display: block;
+                    color: #858796;
+                    margin-bottom: 10px;
+                    font-size: 0.85rem;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                  "
+                >
+                  <i class="fas fa-edit"></i> Cập nhật trạng thái
+                </label>
+
+                <!-- Custom Dropdown -->
+                <div class="custom-select-wrapper" id="statusDropdown">
+                  <!-- Trigger button -->
+                  <div
+                    class="custom-select-trigger"
+                    id="dropdownTrigger"
+                    onclick="toggleDropdown()"
+                  >
+                    <div class="trigger-content" id="triggerContent">
+                      <!-- Filled by JS -->
+                    </div>
+                    <i
+                      class="fas fa-chevron-down dropdown-arrow"
+                      id="dropdownArrow"
+                    ></i>
+                  </div>
+
+                  <!-- Options panel -->
+                  <div class="custom-select-options" id="dropdownOptions">
+                    <div
+                      class="option-item"
+                      data-value="PENDING"
+                      onclick="selectStatus(this)"
+                    >
+                      <span
+                        class="status-dot"
+                        style="background: #f6c23e"
+                      ></span>
+                      <i
+                        class="fas fa-clock"
+                        style="color: #f6c23e; width: 18px"
+                      ></i>
+                      <div class="option-text">
+                        <span class="option-label">Chờ xác nhận</span>
+                        <span class="option-desc"
+                          >Đơn hàng chưa được xử lý</span
+                        >
+                      </div>
+                    </div>
+                    <div
+                      class="option-item"
+                      data-value="CONFIRMED"
+                      onclick="selectStatus(this)"
+                    >
+                      <span
+                        class="status-dot"
+                        style="background: #36b9cc"
+                      ></span>
+                      <i
+                        class="fas fa-check-circle"
+                        style="color: #36b9cc; width: 18px"
+                      ></i>
+                      <div class="option-text">
+                        <span class="option-label">Đã xác nhận</span>
+                        <span class="option-desc">Đơn hàng đã được duyệt</span>
+                      </div>
+                    </div>
+                    <div
+                      class="option-item"
+                      data-value="SHIPPING"
+                      onclick="selectStatus(this)"
+                    >
+                      <span
+                        class="status-dot"
+                        style="background: #4e73df"
+                      ></span>
+                      <i
+                        class="fas fa-truck"
+                        style="color: #4e73df; width: 18px"
+                      ></i>
+                      <div class="option-text">
+                        <span class="option-label">Đang giao hàng</span>
+                        <span class="option-desc"
+                          >Hàng đang trên đường giao</span
+                        >
+                      </div>
+                    </div>
+                    <div
+                      class="option-item"
+                      data-value="DELIVERED"
+                      onclick="selectStatus(this)"
+                    >
+                      <span
+                        class="status-dot"
+                        style="background: #1cc88a"
+                      ></span>
+                      <i
+                        class="fas fa-box-open"
+                        style="color: #1cc88a; width: 18px"
+                      ></i>
+                      <div class="option-text">
+                        <span class="option-label">Đã giao hàng</span>
+                        <span class="option-desc"
+                          >Khách hàng đã nhận được hàng</span
+                        >
+                      </div>
+                    </div>
+                    <div class="option-divider"></div>
+                    <div
+                      class="option-item option-danger"
+                      data-value="CANCELLED"
+                      onclick="selectStatus(this)"
+                    >
+                      <span
+                        class="status-dot"
+                        style="background: #e74a3b"
+                      ></span>
+                      <i
+                        class="fas fa-times-circle"
+                        style="color: #e74a3b; width: 18px"
+                      ></i>
+                      <div class="option-text">
+                        <span class="option-label">Hủy đơn</span>
+                        <span class="option-desc">Đơn hàng bị hủy bỏ</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                id="updateBtn"
+                style="
+                  width: 100%;
+                  padding: 13px;
+                  background: linear-gradient(135deg, #4e73df, #224abe);
+                  color: white;
+                  border: none;
+                  border-radius: 10px;
+                  cursor: pointer;
+                  font-size: 0.95rem;
+                  font-weight: 600;
+                  letter-spacing: 0.3px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  gap: 8px;
+                  transition: all 0.2s ease;
+                  box-shadow: 0 4px 15px rgba(78, 115, 223, 0.35);
+                "
+                onmouseover="
+                  this.style.transform = 'translateY(-2px)';
+                  this.style.boxShadow = '0 6px 20px rgba(78,115,223,0.45)';
+                "
+                onmouseout="
+                  this.style.transform = 'translateY(0)';
+                  this.style.boxShadow = '0 4px 15px rgba(78,115,223,0.35)';
+                "
+              >
+                <i class="fas fa-save"></i> Lưu thay đổi
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <style>
+      /* ===== Status Badges ===== */
+      .badge-warning {
+        background: #f6c23e;
+        color: white;
+      }
+      .badge-info {
+        background: #36b9cc;
+        color: white;
+      }
+      .badge-primary {
+        background: #4e73df;
+        color: white;
+      }
+      .badge-success {
+        background: #1cc88a;
+        color: white;
+      }
+      .badge-danger {
+        background: #e74a3b;
+        color: white;
+      }
+
+      /* ===== Custom Dropdown ===== */
+      .custom-select-wrapper {
+        position: relative;
+        user-select: none;
+      }
+
+      .custom-select-trigger {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 13px 16px;
+        background: #fff;
+        border: 2px solid #e3e6f0;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      }
+      .custom-select-trigger:hover {
+        border-color: #4e73df;
+        box-shadow: 0 0 0 4px rgba(78, 115, 223, 0.1);
+      }
+      .custom-select-trigger.open {
+        border-color: #4e73df;
+        border-radius: 12px 12px 0 0;
+        box-shadow: 0 0 0 4px rgba(78, 115, 223, 0.1);
+      }
+
+      .trigger-content {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: #3a3b45;
+      }
+      .trigger-content i {
+        font-size: 1rem;
+      }
+
+      .dropdown-arrow {
+        color: #858796;
+        font-size: 0.8rem;
+        transition: transform 0.25s ease;
+      }
+      .dropdown-arrow.rotated {
+        transform: rotate(180deg);
+      }
+
+      /* ===== Options Panel ===== */
+      .custom-select-options {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #fff;
+        border: 2px solid #4e73df;
+        border-top: none;
+        border-radius: 0 0 12px 12px;
+        box-shadow: 0 12px 35px rgba(78, 115, 223, 0.18);
+        z-index: 999;
+        overflow: hidden;
+        max-height: 0;
+        opacity: 0;
+        transition:
+          max-height 0.3s ease,
+          opacity 0.25s ease;
+      }
+      .custom-select-options.open {
+        max-height: 400px;
+        opacity: 1;
+      }
+
+      /* ===== Option Items ===== */
+      .option-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 13px 16px;
+        cursor: pointer;
+        transition: background 0.15s ease;
+        position: relative;
+      }
+      .option-item:hover {
+        background: #f0f4ff;
+      }
+      .option-item.selected {
+        background: #eef2ff;
+      }
+      .option-item.selected::after {
+        content: "\f00c";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        color: #4e73df;
+        position: absolute;
+        right: 16px;
+        font-size: 0.85rem;
+      }
+      .option-item.option-danger:hover {
+        background: #fff5f5;
+      }
+
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.07);
+      }
+
+      .option-text {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .option-label {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #3a3b45;
+      }
+      .option-desc {
+        font-size: 0.775rem;
+        color: #858796;
+      }
+
+      .option-divider {
+        height: 1px;
+        background: #e3e6f0;
+        margin: 4px 0;
+      }
+    </style>
+
+    <script>
+      // ===== Status config =====
+      const STATUS_CONFIG = {
+        PENDING: { label: "Chờ xác nhận", icon: "fa-clock", color: "#f6c23e" },
+        CONFIRMED: {
+          label: "Đã xác nhận",
+          icon: "fa-check-circle",
+          color: "#36b9cc",
+        },
+        SHIPPING: {
+          label: "Đang giao hàng",
+          icon: "fa-truck",
+          color: "#4e73df",
+        },
+        DELIVERED: {
+          label: "Đã giao hàng",
+          icon: "fa-box-open",
+          color: "#1cc88a",
+        },
+        CANCELLED: {
+          label: "Hủy đơn",
+          icon: "fa-times-circle",
+          color: "#e74a3b",
+        },
+      };
+
+      const currentStatus = document.getElementById("selectedStatus").value;
+
+      // ===== Khởi tạo trigger với giá trị hiện tại =====
+      function initDropdown() {
+        const cfg = STATUS_CONFIG[currentStatus];
+        if (cfg) {
+          document.getElementById("triggerContent").innerHTML =
+            `<i class="fas ${cfg.icon}" style="color:${cfg.color}"></i>
+             <span>${cfg.label}</span>`;
+        }
+        // Mark selected option
+        document.querySelectorAll(".option-item").forEach((item) => {
+          if (item.dataset.value === currentStatus) {
+            item.classList.add("selected");
+          }
+        });
+      }
+
+      // ===== Toggle dropdown =====
+      function toggleDropdown() {
+        const trigger = document.getElementById("dropdownTrigger");
+        const options = document.getElementById("dropdownOptions");
+        const arrow = document.getElementById("dropdownArrow");
+        const isOpen = options.classList.toggle("open");
+        trigger.classList.toggle("open", isOpen);
+        arrow.classList.toggle("rotated", isOpen);
+      }
+
+      // ===== Select a status =====
+      function selectStatus(el) {
+        const val = el.dataset.value;
+        const cfg = STATUS_CONFIG[val];
+
+        // Update hidden input
+        document.getElementById("selectedStatus").value = val;
+
+        // Update trigger label
+        document.getElementById("triggerContent").innerHTML =
+          `<i class="fas ${cfg.icon}" style="color:${cfg.color}"></i>
+           <span>${cfg.label}</span>`;
+
+        // Mark selected
+        document
+          .querySelectorAll(".option-item")
+          .forEach((i) => i.classList.remove("selected"));
+        el.classList.add("selected");
+
+        // Close dropdown
+        toggleDropdown();
+      }
+
+      // ===== Close on outside click =====
+      document.addEventListener("click", function (e) {
+        const wrapper = document.getElementById("statusDropdown");
+        if (wrapper && !wrapper.contains(e.target)) {
+          document.getElementById("dropdownOptions").classList.remove("open");
+          document.getElementById("dropdownTrigger").classList.remove("open");
+          document.getElementById("dropdownArrow").classList.remove("rotated");
+        }
+      });
+
+      initDropdown();
+    </script>
+  </body>
+</html>

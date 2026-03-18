@@ -1,0 +1,666 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="'Đơn hàng ' + ${order.orderCode} + ' - SportWear Shop'">
+      Chi tiết đơn hàng
+    </title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      .detail-container {
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 0 20px;
+      }
+
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #007bff;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-bottom: 24px;
+        transition: all 0.2s;
+      }
+      .back-link:hover {
+        gap: 12px;
+      }
+
+      /* Hero header */
+      .order-hero {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        border-radius: 20px;
+        padding: 30px;
+        color: white;
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+      }
+      .order-hero::before {
+        content: "";
+        position: absolute;
+        top: -30px;
+        right: -30px;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.07);
+      }
+      .order-hero-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+      .hero-code {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .hero-date {
+        opacity: 0.8;
+        font-size: 0.9rem;
+      }
+      .hero-status {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 8px 20px;
+        border-radius: 30px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+      }
+
+      /* Progress bar */
+      .progress-bar-container {
+        margin-top: 28px;
+        display: flex;
+        align-items: center;
+      }
+      .pb-step {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+      }
+      .pb-step:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        top: 18px;
+        left: 50%;
+        width: 100%;
+        height: 3px;
+        background: rgba(255, 255, 255, 0.3);
+        z-index: 0;
+        transition: background 0.5s;
+      }
+      .pb-step.done:not(:last-child)::after {
+        background: rgba(255, 255, 255, 0.9);
+      }
+
+      .pb-dot {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        font-weight: 700;
+        z-index: 1;
+        transition: all 0.3s;
+      }
+      .pb-dot.done {
+        background: white;
+        color: #007bff;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+      .pb-dot.active {
+        background: rgba(255, 255, 255, 0.25);
+        border: 2px solid white;
+        color: white;
+        box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.15);
+      }
+      .pb-dot.pending {
+        background: rgba(255, 255, 255, 0.12);
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      .pb-label {
+        font-size: 0.75rem;
+        margin-top: 8px;
+        opacity: 0.75;
+        font-weight: 500;
+      }
+      .pb-label.done {
+        opacity: 1;
+        font-weight: 600;
+      }
+      .pb-label.active {
+        opacity: 1;
+        font-weight: 700;
+      }
+
+      /* Cancelled banner */
+      .cancelled-banner {
+        background: linear-gradient(135deg, #e74a3b, #c0392b);
+        border-radius: 20px;
+        padding: 20px 28px;
+        color: white;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      /* Cards */
+      .detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+      .info-card {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 3px 15px rgba(0, 0, 0, 0.07);
+      }
+      .info-card-title {
+        font-size: 0.82rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #999;
+        margin: 0 0 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .info-card-title i {
+        color: #007bff;
+      }
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 10px 0;
+        border-bottom: 1px solid #f5f5f5;
+        font-size: 0.9rem;
+      }
+      .info-row:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+      .info-label {
+        color: #888;
+      }
+      .info-value {
+        font-weight: 500;
+        color: #333;
+        text-align: right;
+      }
+
+      /* Products table card */
+      .products-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 3px 15px rgba(0, 0, 0, 0.07);
+        overflow: hidden;
+        margin-bottom: 20px;
+      }
+      .products-card-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid #f5f5f5;
+        font-size: 0.82rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #999;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .products-card-header i {
+        color: #007bff;
+      }
+
+      .product-row {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 16px 24px;
+        border-bottom: 1px solid #f8f8f8;
+        transition: background 0.15s;
+      }
+      .product-row:last-child {
+        border-bottom: none;
+      }
+      .product-row:hover {
+        background: #fafbff;
+      }
+      .prod-img {
+        width: 64px;
+        height: 64px;
+        border-radius: 12px;
+        object-fit: cover;
+        border: 1px solid #f0f0f0;
+        flex-shrink: 0;
+      }
+      .prod-info {
+        flex: 1;
+      }
+      .prod-name {
+        font-weight: 600;
+        color: #333;
+        margin: 0 0 4px;
+        font-size: 0.95rem;
+      }
+      .prod-qty {
+        font-size: 0.82rem;
+        color: #999;
+        margin: 0;
+      }
+      .prod-subtotal {
+        font-weight: 700;
+        color: #e74a3b;
+        font-size: 1rem;
+        white-space: nowrap;
+      }
+
+      /* Total section */
+      .total-card {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 3px 15px rgba(0, 0, 0, 0.07);
+        margin-bottom: 20px;
+      }
+      .total-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #f5f5f5;
+        font-size: 0.9rem;
+        color: #666;
+      }
+      .total-row.grand {
+        border-bottom: none;
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #333;
+        padding-top: 16px;
+        margin-top: 4px;
+        border-top: 2px dashed #e9ecef;
+      }
+      .total-row.grand span:last-child {
+        color: #e74a3b;
+        font-size: 1.35rem;
+      }
+
+      .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        color: white;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 600;
+        box-shadow: 0 4px 15px rgba(0, 123, 255, 0.35);
+        transition: all 0.2s;
+      }
+      .btn-back:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 123, 255, 0.45);
+      }
+
+      @media (max-width: 600px) {
+        .detail-grid {
+          grid-template-columns: 1fr;
+        }
+        .order-hero-top {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <div class="detail-container">
+      <a th:href="@{/user/orders}" class="back-link">
+        <i class="fas fa-arrow-left"></i> Về danh sách đơn hàng
+      </a>
+
+      <!-- ====== Hero Header (non-cancelled) ====== -->
+      <div class="order-hero" th:if="${order.status.name() != 'CANCELLED'}">
+        <div class="order-hero-top">
+          <div>
+            <div class="hero-code">
+              <i
+                class="fas fa-receipt"
+                style="font-size: 1.2rem; opacity: 0.8; margin-right: 8px"
+              ></i>
+              <span th:text="${order.orderCode}">ORD001</span>
+            </div>
+            <div class="hero-date">
+              <i class="fas fa-calendar-alt" style="margin-right: 5px"></i>
+              Đặt ngày
+              <span
+                th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}"
+              ></span>
+            </div>
+          </div>
+          <div class="hero-status">
+            <i
+              th:classappend="${order.status.name() == 'PENDING'   ? 'fas fa-clock'        :
+                                 order.status.name() == 'CONFIRMED' ? 'fas fa-check-circle' :
+                                 order.status.name() == 'SHIPPING'  ? 'fas fa-truck'        :
+                                                                       'fas fa-box-open'}"
+            ></i>
+            <span
+              th:text="${order.status.name() == 'PENDING'   ? 'Chờ xác nhận' :
+                             order.status.name() == 'CONFIRMED' ? 'Đã xác nhận'  :
+                             order.status.name() == 'SHIPPING'  ? 'Đang giao hàng' :
+                                                                   'Đã giao hàng'}"
+            ></span>
+          </div>
+        </div>
+
+        <!-- Progress -->
+        <div class="progress-bar-container">
+          <div class="pb-step done">
+            <div class="pb-dot done"><i class="fas fa-check"></i></div>
+            <span class="pb-label done">Đặt hàng</span>
+          </div>
+          <div
+            class="pb-step"
+            th:classappend="${order.status.name() == 'CONFIRMED' or order.status.name() == 'SHIPPING' or order.status.name() == 'DELIVERED'} ? 'done' : ''"
+          >
+            <div
+              class="pb-dot"
+              th:classappend="${order.status.name() == 'CONFIRMED'} ? 'active' :
+                                  (${order.status.name() == 'SHIPPING' or order.status.name() == 'DELIVERED'} ? 'done' : 'pending')"
+            >
+              <i
+                class="fas fa-check"
+                th:if="${order.status.name() == 'SHIPPING' or order.status.name() == 'DELIVERED'}"
+              ></i>
+              <i
+                class="fas fa-check-circle"
+                th:if="${order.status.name() == 'CONFIRMED'}"
+              ></i>
+              <span th:if="${order.status.name() == 'PENDING'}">2</span>
+            </div>
+            <span
+              class="pb-label"
+              th:classappend="${order.status.name() == 'CONFIRMED' or order.status.name() == 'SHIPPING' or order.status.name() == 'DELIVERED'} ? 'done' : ''"
+            >
+              Xác nhận
+            </span>
+          </div>
+          <div
+            class="pb-step"
+            th:classappend="${order.status.name() == 'DELIVERED'} ? 'done' : ''"
+          >
+            <div
+              class="pb-dot"
+              th:classappend="${order.status.name() == 'SHIPPING'} ? 'active' :
+                                  (${order.status.name() == 'DELIVERED'} ? 'done' : 'pending')"
+            >
+              <i
+                class="fas fa-check"
+                th:if="${order.status.name() == 'DELIVERED'}"
+              ></i>
+              <i
+                class="fas fa-truck"
+                th:if="${order.status.name() == 'SHIPPING'}"
+              ></i>
+              <span
+                th:if="${order.status.name() != 'SHIPPING' and order.status.name() != 'DELIVERED'}"
+                >3</span
+              >
+            </div>
+            <span
+              class="pb-label"
+              th:classappend="${order.status.name() == 'SHIPPING' or order.status.name() == 'DELIVERED'} ? 'done' : ''"
+            >
+              Đang giao
+            </span>
+          </div>
+          <div
+            class="pb-step"
+            th:classappend="${order.status.name() == 'DELIVERED'} ? 'done' : ''"
+          >
+            <div
+              class="pb-dot"
+              th:classappend="${order.status.name() == 'DELIVERED'} ? 'done' : 'pending'"
+            >
+              <i
+                class="fas fa-check"
+                th:if="${order.status.name() == 'DELIVERED'}"
+              ></i>
+              <span th:unless="${order.status.name() == 'DELIVERED'}">4</span>
+            </div>
+            <span
+              class="pb-label"
+              th:classappend="${order.status.name() == 'DELIVERED'} ? 'done' : ''"
+            >
+              Nhận hàng
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cancelled banner -->
+      <div
+        class="cancelled-banner"
+        th:if="${order.status.name() == 'CANCELLED'}"
+      >
+        <i class="fas fa-ban" style="font-size: 2rem; opacity: 0.8"></i>
+        <div>
+          <div style="font-size: 1.1rem; font-weight: 700; margin-bottom: 4px">
+            Đơn hàng đã bị hủy
+          </div>
+          <div style="opacity: 0.85; font-size: 0.9rem">
+            Mã đơn: <strong th:text="${order.orderCode}"></strong> — Ngày đặt:
+            <span
+              th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}"
+            ></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info grid -->
+      <div class="detail-grid">
+        <!-- Shipping info -->
+        <div class="info-card">
+          <p class="info-card-title">
+            <i class="fas fa-map-marker-alt"></i> Địa chỉ giao hàng
+          </p>
+          <div class="info-row">
+            <span class="info-label">Người nhận</span>
+            <span class="info-value" th:text="${order.shippingName}">—</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Số điện thoại</span>
+            <span class="info-value" th:text="${order.shippingPhone}">—</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Địa chỉ</span>
+            <span
+              class="info-value"
+              th:text="${order.shippingAddress}"
+              style="max-width: 180px"
+              >—</span
+            >
+          </div>
+          <div class="info-row" th:if="${order.note}">
+            <span class="info-label">Ghi chú</span>
+            <span
+              class="info-value"
+              th:text="${order.note}"
+              style="max-width: 180px; font-style: italic"
+              >—</span
+            >
+          </div>
+        </div>
+
+        <!-- Payment info -->
+        <div class="info-card">
+          <p class="info-card-title">
+            <i class="fas fa-credit-card"></i> Thanh toán
+          </p>
+          <div class="info-row">
+            <span class="info-label">Phương thức</span>
+            <span
+              class="info-value"
+              th:text="${order.paymentMethod == null ? 'COD' :
+                             order.paymentMethod.name() == 'COD'    ? '💵 Thanh toán khi nhận hàng' :
+                             order.paymentMethod.name() == 'PAYPAL' ? '🅿 PayPal'  :
+                             order.paymentMethod.name() == 'VNPAY'  ? '🏦 VNPAY'   :
+                                                                       '📱 Ví MoMo'}"
+              >—</span
+            >
+          </div>
+          <div class="info-row">
+            <span class="info-label">Trạng thái TT</span>
+            <span
+              class="info-value"
+              th:if="${order.paid}"
+              style="color: #1cc88a; font-weight: 700"
+            >
+              <i class="fas fa-check-circle"></i> Đã thanh toán
+            </span>
+            <span
+              class="info-value"
+              th:unless="${order.paid}"
+              style="color: #f6c23e; font-weight: 700"
+            >
+              <i class="fas fa-clock"></i> Chưa thanh toán
+            </span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Ngày đặt</span>
+            <span
+              class="info-value"
+              th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}"
+              >—</span
+            >
+          </div>
+          <div class="info-row" th:if="${order.updatedAt != null}">
+            <span class="info-label">Cập nhật</span>
+            <span
+              class="info-value"
+              th:text="${#temporals.format(order.updatedAt, 'dd/MM/yyyy HH:mm')}"
+              >—</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Products -->
+      <div class="products-card">
+        <div class="products-card-header">
+          <i class="fas fa-shopping-bag"></i> Sản phẩm (<span
+            th:text="${order.orderDetails.size()}"
+            >0</span
+          >
+          món)
+        </div>
+        <div th:each="item : ${order.orderDetails}" class="product-row">
+          <img
+            th:src="${item.product?.image}"
+            th:onerror="this.src='/images/placeholder.png'"
+            class="prod-img"
+            alt=""
+          />
+          <div class="prod-info">
+            <p class="prod-name" th:text="${item.product?.name ?: 'Sản phẩm'}">
+              Tên sản phẩm
+            </p>
+            <p class="prod-qty">
+              Đơn giá:
+              <span
+                th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"
+              ></span>
+              × <span th:text="${item.quantity}">1</span>
+            </p>
+            <span
+              th:if="${item.size != null}"
+              style="
+                display: inline-block;
+                margin-top: 4px;
+                padding: 2px 10px;
+                background: #f0f4ff;
+                color: #4e73df;
+                border-radius: 20px;
+                font-size: 0.78rem;
+                font-weight: 700;
+                border: 1px solid #c9d6f5;
+              "
+            >
+              Size: <span th:text="${item.size}"></span>
+            </span>
+          </div>
+          <span
+            class="prod-subtotal"
+            th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + ' đ'"
+          >
+            0 đ
+          </span>
+        </div>
+      </div>
+
+      <!-- Total -->
+      <div class="total-card">
+        <div class="total-row">
+          <span>Tạm tính</span>
+          <span
+            th:text="${#numbers.formatDecimal(order.totalAmount - (order.shippingFee ?: 0), 0, 'COMMA', 0, 'POINT')} + ' đ'"
+            >0 đ</span
+          >
+        </div>
+        <div class="total-row">
+          <span>Phí vận chuyển</span>
+          <span
+            th:text="${order.shippingFee != null and order.shippingFee > 0 ?
+                           #numbers.formatDecimal(order.shippingFee, 0, 'COMMA', 0, 'POINT') + ' đ' :
+                           'Miễn phí'}"
+            >Miễn phí</span
+          >
+        </div>
+        <div class="total-row grand">
+          <span>Tổng cộng</span>
+          <span
+            th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' đ'"
+            >0 đ</span
+          >
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div style="text-align: center; padding-bottom: 40px">
+        <a th:href="@{/user/orders}" class="btn-back">
+          <i class="fas fa-arrow-left"></i> Về danh sách đơn hàng
+        </a>
+      </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+  </body>
+</html>

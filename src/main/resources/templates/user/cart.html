@@ -1,0 +1,556 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Giỏ hàng - SportWear Shop</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      .cart-page {
+        background: #f4f6fb;
+        padding: 40px 0 80px;
+      }
+      .cart-page-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 28px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .cart-page-title i {
+        color: #e63946;
+      }
+
+      .cart-layout {
+        display: grid;
+        grid-template-columns: 1fr 360px;
+        gap: 24px;
+        align-items: start;
+      }
+
+      /* Items card */
+      .cart-items-card {
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+        overflow: hidden;
+      }
+      .cart-items-header {
+        display: grid;
+        grid-template-columns: 3fr 1fr 1.6fr 1fr 48px;
+        padding: 13px 24px;
+        background: #f8f9fa;
+        border-bottom: 1px solid #eee;
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #6c757d;
+      }
+      .cart-item-row {
+        display: grid;
+        grid-template-columns: 3fr 1fr 1.6fr 1fr 48px;
+        padding: 18px 24px;
+        border-bottom: 1px solid #f2f2f2;
+        align-items: center;
+        transition: background 0.15s;
+      }
+      .cart-item-row:last-child {
+        border-bottom: none;
+      }
+      .cart-item-row:hover {
+        background: #fafbff;
+      }
+
+      .cart-item-product {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .cart-item-img {
+        width: 74px;
+        height: 74px;
+        object-fit: cover;
+        border-radius: 10px;
+        border: 1px solid #eee;
+        flex-shrink: 0;
+      }
+      .cart-item-name {
+        font-weight: 600;
+        color: #222;
+        font-size: 0.93rem;
+        line-height: 1.4;
+      }
+      .cart-item-price {
+        font-weight: 500;
+        color: #555;
+        font-size: 0.92rem;
+      }
+      .cart-item-subtotal {
+        font-weight: 700;
+        color: #e63946;
+        font-size: 0.95rem;
+      }
+
+      /* Qty control */
+      .qty-control {
+        display: inline-flex;
+        align-items: center;
+        border: 1.5px solid #dee2e6;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      .qty-btn {
+        width: 32px;
+        height: 36px;
+        border: none;
+        background: transparent;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #495057;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.15s;
+      }
+      .qty-btn:hover {
+        background: #f0f0f0;
+        color: #e63946;
+      }
+      .qty-input {
+        width: 38px;
+        height: 36px;
+        border: none;
+        border-left: 1.5px solid #dee2e6;
+        border-right: 1.5px solid #dee2e6;
+        text-align: center;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #222;
+        outline: none;
+        background: transparent;
+        -moz-appearance: textfield;
+      }
+      .qty-input::-webkit-outer-spin-button,
+      .qty-input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+      }
+
+      /* Remove btn */
+      .btn-remove {
+        width: 36px;
+        height: 36px;
+        border: none;
+        border-radius: 8px;
+        background: #fff0f0;
+        color: #e63946;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.85rem;
+        transition: background 0.15s;
+      }
+      .btn-remove:hover {
+        background: #e63946;
+        color: #fff;
+      }
+
+      .continue-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        margin: 16px 24px;
+        border: 1.5px solid #dee2e6;
+        border-radius: 8px;
+        color: #6c757d;
+        font-weight: 500;
+        font-size: 0.88rem;
+        text-decoration: none;
+        transition: all 0.15s;
+        background: #fff;
+      }
+      .continue-btn:hover {
+        border-color: #e63946;
+        color: #e63946;
+      }
+
+      /* Summary */
+      .cart-summary-card {
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+        padding: 28px;
+        position: sticky;
+        top: 90px;
+      }
+      .summary-title {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 18px;
+        padding-bottom: 14px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 13px;
+        font-size: 0.93rem;
+        color: #555;
+      }
+      .summary-row .lbl {
+        color: #6c757d;
+      }
+      .ship-free {
+        color: #28a745;
+        font-weight: 600;
+      }
+      .summary-divider {
+        border: none;
+        border-top: 1.5px solid #f0f0f0;
+        margin: 16px 0;
+      }
+      .summary-total-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        font-size: 1.05rem;
+        font-weight: 700;
+      }
+      .summary-total-amount {
+        color: #e63946;
+        font-size: 1.2rem;
+      }
+
+      /* Coupon */
+      .coupon-wrap {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 18px;
+      }
+      .coupon-wrap input {
+        flex: 1;
+        padding: 10px 14px;
+        border: 1.5px solid #dee2e6;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        outline: none;
+        transition: border-color 0.15s;
+      }
+      .coupon-wrap input:focus {
+        border-color: #e63946;
+      }
+      .btn-apply {
+        padding: 10px 14px;
+        background: #1a1a2e;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.15s;
+        white-space: nowrap;
+      }
+      .btn-apply:hover {
+        background: #e63946;
+      }
+
+      /* Checkout */
+      .btn-checkout {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #e63946, #c1121f);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        font-size: 0.97rem;
+        font-weight: 700;
+        text-decoration: none;
+        transition:
+          opacity 0.15s,
+          transform 0.1s;
+      }
+      .btn-checkout:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+        color: #fff;
+      }
+
+      /* Free shipping bar */
+      .ship-bar {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 13px;
+        margin-bottom: 18px;
+        font-size: 0.83rem;
+      }
+      .ship-bar .bar-lbl {
+        color: #555;
+        margin-bottom: 7px;
+      }
+      .ship-bar .bar-lbl strong {
+        color: #28a745;
+      }
+      .bar-bg {
+        height: 6px;
+        background: #dee2e6;
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      .bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #28a745, #20c997);
+        border-radius: 4px;
+        transition: width 0.4s ease;
+      }
+
+      /* Empty cart */
+      .empty-cart {
+        text-align: center;
+        padding: 80px 20px;
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+      }
+      .empty-cart i {
+        font-size: 4rem;
+        color: #dee2e6;
+        display: block;
+        margin-bottom: 16px;
+      }
+      .empty-cart p {
+        color: #6c757d;
+        margin-bottom: 24px;
+      }
+
+      @media (max-width: 900px) {
+        .cart-layout {
+          grid-template-columns: 1fr;
+        }
+        .cart-summary-card {
+          position: static;
+        }
+        .cart-items-header {
+          display: none;
+        }
+        .cart-item-row {
+          grid-template-columns: 1fr 1fr;
+          gap: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <section class="cart-page">
+      <div class="container">
+        <h2 class="cart-page-title">
+          <i class="fas fa-shopping-cart"></i> Giỏ hàng của bạn
+        </h2>
+
+        <!-- Empty -->
+        <div th:if="${#lists.isEmpty(cartItems)}" class="empty-cart">
+          <i class="fas fa-shopping-cart"></i>
+          <p>Giỏ hàng của bạn đang trống</p>
+          <a th:href="@{/products}" class="btn btn-primary">
+            <i class="fas fa-arrow-left"></i> Tiếp tục mua sắm
+          </a>
+        </div>
+
+        <!-- Cart with items -->
+        <div
+          th:if="${!#lists.isEmpty(cartItems)}"
+          class="cart-layout"
+          id="cart-container"
+        >
+          <!-- Left -->
+          <div>
+            <div class="cart-items-card">
+              <div class="cart-items-header">
+                <span>Sản phẩm</span>
+                <span>Giá</span>
+                <span>Số lượng</span>
+                <span>Thành tiền</span>
+                <span></span>
+              </div>
+              <div
+                th:each="item : ${cartItems}"
+                th:attr="data-item-id=${item.id}"
+                class="cart-item-row"
+              >
+                <!-- Product -->
+                <div class="cart-item-product">
+                  <img
+                    th:src="${item.productImage}"
+                    class="cart-item-img"
+                    alt="Product"
+                  />
+                  <div>
+                    <span class="cart-item-name" th:text="${item.productName}"
+                      >Tên sản phẩm</span
+                    >
+                    <span
+                      th:if="${item.size != null}"
+                      style="
+                        display: inline-block;
+                        margin-top: 4px;
+                        padding: 2px 10px;
+                        background: #f0f4ff;
+                        color: #4e73df;
+                        border-radius: 20px;
+                        font-size: 0.78rem;
+                        font-weight: 700;
+                        border: 1px solid #c9d6f5;
+                      "
+                    >
+                      Size: <span th:text="${item.size}"></span>
+                    </span>
+                  </div>
+                </div>
+                <!-- Price -->
+                <div
+                  class="cart-item-price"
+                  th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"
+                ></div>
+                <!-- Quantity -->
+                <div>
+                  <div class="qty-control">
+                    <button
+                      class="qty-btn"
+                      th:onclick="'CartManager.decreaseQuantity(' + ${item.id} + ', this.nextElementSibling)'"
+                    >
+                      −
+                    </button>
+                    <input
+                      class="qty-input"
+                      type="number"
+                      th:value="${item.quantity}"
+                      min="1"
+                      th:onchange="'CartManager.updateQuantity(' + ${item.id} + ', this.value)'"
+                    />
+                    <button
+                      class="qty-btn"
+                      th:onclick="'CartManager.increaseQuantity(' + ${item.id} + ', this.previousElementSibling)'"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+                <!-- Subtotal -->
+                <div
+                  class="cart-item-subtotal item-subtotal"
+                  th:text="${#numbers.formatDecimal(item.subtotal, 0, 'COMMA', 0, 'POINT')} + ' đ'"
+                ></div>
+                <!-- Remove -->
+                <div>
+                  <button
+                    class="btn-remove"
+                    th:onclick="'CartManager.removeFromCart(' + ${item.id} + ')'"
+                  >
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <a th:href="@{/products}" class="continue-btn">
+              <i class="fas fa-arrow-left"></i> Tiếp tục mua sắm
+            </a>
+          </div>
+
+          <!-- Right: summary -->
+          <div class="cart-summary-card">
+            <div class="summary-title">Tóm tắt đơn hàng</div>
+
+            <!-- Shipping progress bar -->
+            <div id="ship-bar-section">
+              <div th:if="${cartTotal < 500000}" class="ship-bar">
+                <div class="bar-lbl">
+                  Mua thêm
+                  <strong
+                    th:text="${#numbers.formatDecimal(500000 - cartTotal, 0, 'COMMA', 0, 'POINT')} + ' đ'"
+                  ></strong>
+                  để được miễn phí vận chuyển
+                </div>
+                <div class="bar-bg">
+                  <div
+                    class="bar-fill"
+                    th:style="'width:' + ${(cartTotal / 500000.0) * 100} + '%'"
+                  ></div>
+                </div>
+              </div>
+              <div
+                th:if="${cartTotal >= 500000}"
+                class="ship-bar"
+                style="background: #f0fff4"
+              >
+                <i
+                  class="fas fa-check-circle"
+                  style="color: #28a745; margin-right: 6px"
+                ></i>
+                <strong style="color: #28a745"
+                  >Bạn được miễn phí vận chuyển!</strong
+                >
+              </div>
+            </div>
+
+            <div class="summary-row">
+              <span class="lbl">Tạm tính:</span>
+              <span
+                id="summary-subtotal"
+                th:text="${#numbers.formatDecimal(cartTotal, 0, 'COMMA', 0, 'POINT')} + ' đ'"
+              ></span>
+            </div>
+            <div class="summary-row">
+              <span class="lbl">Phí vận chuyển:</span>
+              <span
+                id="summary-shipping"
+                th:class="${cartTotal >= 500000} ? 'ship-free' : ''"
+                th:text="${cartTotal >= 500000} ? 'Miễn phí' : '30,000 đ'"
+              ></span>
+            </div>
+
+            <hr class="summary-divider" />
+
+            <div class="summary-total-row">
+              <span>Tổng cộng:</span>
+              <span
+                class="summary-total-amount"
+                id="summary-total"
+                th:text="${#numbers.formatDecimal(cartTotal >= 500000 ? cartTotal : cartTotal + 30000, 0, 'COMMA', 0, 'POINT')} + ' đ'"
+              ></span>
+            </div>
+
+            <div class="coupon-wrap">
+              <input type="text" placeholder="Mã giảm giá" />
+              <button class="btn-apply">Áp dụng</button>
+            </div>
+
+            <a th:href="@{/checkout}" class="btn-checkout">
+              <i class="fas fa-lock"></i> Tiến hành thanh toán
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    <script th:src="@{/js/cart-ajax.js}"></script>
+  </body>
+</html>

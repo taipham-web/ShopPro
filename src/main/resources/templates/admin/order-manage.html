@@ -1,0 +1,200 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản lý đơn hàng - SportWear Shop</title>
+    <link rel="stylesheet" th:href="@{/css/admin-style.css}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Topbar -->
+      <div class="topbar">
+        <h4>Quản lý đơn hàng</h4>
+        <div>
+          <select
+            class="form-control"
+            style="display: inline-block; width: auto"
+            onchange="filterByStatus(this.value)"
+          >
+            <option value="">Tất cả trạng thái</option>
+            <option value="PENDING">Chờ xác nhận</option>
+            <option value="CONFIRMED">Đã xác nhận</option>
+            <option value="SHIPPING">Đang giao</option>
+            <option value="DELIVERED">Đã giao</option>
+            <option value="CANCELLED">Đã hủy</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Orders Table -->
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Mã đơn hàng</th>
+            <th>Khách hàng</th>
+            <th>Điện thoại</th>
+            <th>Tổng tiền</th>
+            <th>Thanh toán</th>
+            <th>Trạng thái</th>
+            <th>Ngày đặt</th>
+            <th>Hành động</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="order : ${orders}">
+            <td th:text="${order.orderCode}">ORD001</td>
+            <td th:text="${order.shippingName}">Nguyễn Văn A</td>
+            <td th:text="${order.shippingPhone}">0123456789</td>
+            <td
+              th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' đ'"
+            >
+              500,000 đ
+            </td>
+            <td>
+              <span
+                class="badge"
+                th:classappend="${order.paid} ? 'badge-delivered' : 'badge-pending'"
+                th:text="${order.paid} ? 'Đã thanh toán' : 'Chưa thanh toán'"
+                >Chưa TT</span
+              >
+            </td>
+            <td>
+              <span
+                class="badge"
+                th:classappend="'badge-' + ${order.status.name().toLowerCase()}"
+              >
+                <span th:switch="${order.status.name()}">
+                  <span th:case="'PENDING'">Chờ xác nhận</span>
+                  <span th:case="'CONFIRMED'">Đã xác nhận</span>
+                  <span th:case="'SHIPPING'">Đang giao</span>
+                  <span th:case="'DELIVERED'">Đã giao</span>
+                  <span th:case="'CANCELLED'">Đã hủy</span>
+                </span>
+              </span>
+            </td>
+            <td
+              th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}"
+            >
+              01/01/2024
+            </td>
+            <td>
+              <a
+                th:href="@{/admin/orders/{id}(id=${order.id})}"
+                class="btn btn-sm btn-primary"
+                title="Xem chi tiết"
+              >
+                <i class="fas fa-eye"></i>
+              </a>
+              <div class="dropdown" style="display: inline-block">
+                <button
+                  class="btn btn-sm btn-success"
+                  onclick="toggleDropdown(this)"
+                >
+                  <i class="fas fa-cog"></i>
+                </button>
+                <div
+                  class="dropdown-menu"
+                  style="
+                    display: none;
+                    position: absolute;
+                    background: white;
+                    border: 1px solid #ddd;
+                    border-radius: 5px;
+                    padding: 5px 0;
+                  "
+                >
+                  <form
+                    th:action="@{/admin/orders/update-status/{id}(id=${order.id})}"
+                    method="post"
+                    style="padding: 5px 10px"
+                  >
+                    <input type="hidden" name="status" value="CONFIRMED" />
+                    <button
+                      type="submit"
+                      class="btn btn-sm"
+                      style="width: 100%; text-align: left"
+                    >
+                      Xác nhận
+                    </button>
+                  </form>
+                  <form
+                    th:action="@{/admin/orders/update-status/{id}(id=${order.id})}"
+                    method="post"
+                    style="padding: 5px 10px"
+                  >
+                    <input type="hidden" name="status" value="SHIPPING" />
+                    <button
+                      type="submit"
+                      class="btn btn-sm"
+                      style="width: 100%; text-align: left"
+                    >
+                      Giao hàng
+                    </button>
+                  </form>
+                  <form
+                    th:action="@{/admin/orders/update-status/{id}(id=${order.id})}"
+                    method="post"
+                    style="padding: 5px 10px"
+                  >
+                    <input type="hidden" name="status" value="DELIVERED" />
+                    <button
+                      type="submit"
+                      class="btn btn-sm"
+                      style="width: 100%; text-align: left"
+                    >
+                      Đã giao
+                    </button>
+                  </form>
+                  <form
+                    th:action="@{/admin/orders/update-status/{id}(id=${order.id})}"
+                    method="post"
+                    style="padding: 5px 10px"
+                  >
+                    <input type="hidden" name="status" value="CANCELLED" />
+                    <button
+                      type="submit"
+                      class="btn btn-sm btn-danger"
+                      style="width: 100%; text-align: left"
+                    >
+                      Hủy đơn
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <script>
+      function filterByStatus(status) {
+        window.location.href =
+          "/admin/orders" + (status ? "?status=" + status : "");
+      }
+
+      function toggleDropdown(btn) {
+        const menu = btn.nextElementSibling;
+        menu.style.display = menu.style.display === "none" ? "block" : "none";
+      }
+
+      // Close dropdown when clicking outside
+      document.addEventListener("click", function (e) {
+        if (!e.target.closest(".dropdown")) {
+          document
+            .querySelectorAll(".dropdown-menu")
+            .forEach((m) => (m.style.display = "none"));
+        }
+      });
+    </script>
+  </body>
+</html>

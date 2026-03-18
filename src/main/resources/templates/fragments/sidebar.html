@@ -1,0 +1,72 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <div th:fragment="sidebar" class="sidebar">
+      <div class="brand"><i class="fas fa-running"></i> SportWear Admin</div>
+
+      <nav style="margin-top: 20px">
+        <div class="nav-item">
+          <a th:href="@{/admin/dashboard}" class="nav-link active">
+            <i class="fas fa-tachometer-alt"></i> Dashboard
+          </a>
+        </div>
+
+        <div class="nav-item">
+          <a th:href="@{/admin/categories}" class="nav-link">
+            <i class="fas fa-list"></i> Danh mục
+          </a>
+        </div>
+
+        <div class="nav-item">
+          <a th:href="@{/admin/products}" class="nav-link">
+            <i class="fas fa-box"></i> Sản phẩm
+          </a>
+        </div>
+
+        <div class="nav-item">
+          <a th:href="@{/admin/brands}" class="nav-link">
+            <i class="fas fa-tags"></i> Thương hiệu
+          </a>
+        </div>
+
+        <div class="nav-item">
+          <a th:href="@{/admin/orders}" class="nav-link">
+            <i class="fas fa-shopping-cart"></i> Đơn hàng
+          </a>
+        </div>
+
+        <div class="nav-item">
+          <a th:href="@{/admin/users}" class="nav-link">
+            <i class="fas fa-users"></i> Khách hàng
+          </a>
+        </div>
+
+        <hr style="border-color: rgba(255, 255, 255, 0.1); margin: 20px 15px" />
+
+        <div class="nav-item">
+          <a th:href="@{/}" class="nav-link" target="_blank">
+            <i class="fas fa-external-link-alt"></i> Xem trang web
+          </a>
+        </div>
+
+        <div class="nav-item">
+          <form th:action="@{/auth/logout}" method="post" style="margin: 0">
+            <button
+              type="submit"
+              class="nav-link"
+              style="
+                background: none;
+                border: none;
+                width: 100%;
+                text-align: left;
+                cursor: pointer;
+              "
+            >
+              <i class="fas fa-sign-out-alt"></i> Đăng xuất
+            </button>
+          </form>
+        </div>
+      </nav>
+    </div>
+  </body>
+</html>

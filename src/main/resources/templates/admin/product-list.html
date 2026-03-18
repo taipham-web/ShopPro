@@ -1,0 +1,153 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản lý sản phẩm - SportWear Shop</title>
+    <link rel="stylesheet" th:href="@{/css/admin-style.css}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Topbar -->
+      <div class="topbar">
+        <h4>Quản lý sản phẩm</h4>
+        <a th:href="@{/admin/products/add}" class="btn btn-primary">
+          <i class="fas fa-plus"></i> Thêm sản phẩm
+        </a>
+      </div>
+
+      <!-- Search & Filter -->
+      <div class="chart-container" style="margin-bottom: 20px">
+        <form
+          th:action="@{/admin/products}"
+          method="get"
+          style="display: flex; gap: 15px; align-items: center"
+        >
+          <input
+            type="text"
+            name="keyword"
+            class="form-control"
+            placeholder="Tìm kiếm sản phẩm..."
+            th:value="${keyword}"
+            style="max-width: 300px"
+          />
+          <select
+            name="categoryId"
+            class="form-control"
+            style="max-width: 200px"
+          >
+            <option value="">-- Tất cả danh mục --</option>
+            <option
+              th:each="cat : ${categories}"
+              th:value="${cat.id}"
+              th:text="${cat.name}"
+              th:selected="${categoryId == cat.id}"
+            ></option>
+          </select>
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-search"></i> Tìm kiếm
+          </button>
+        </form>
+      </div>
+
+      <!-- Product List -->
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Hình ảnh</th>
+            <th>Tên sản phẩm</th>
+            <th>Danh mục</th>
+            <th>Giá</th>
+            <th>Số lượng</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="product : ${products}">
+            <td th:text="${product.id}">1</td>
+            <td>
+              <img
+                th:src="${product.image}"
+                alt="Product"
+                style="
+                  width: 60px;
+                  height: 60px;
+                  object-fit: cover;
+                  border-radius: 5px;
+                "
+              />
+            </td>
+            <td th:text="${product.name}">Áo thể thao Nike</td>
+            <td th:text="${product.category?.name}">Áo thể thao</td>
+            <td
+              th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"
+            >
+              500,000 đ
+            </td>
+            <td th:text="${product.quantity}">100</td>
+            <td>
+              <span
+                class="badge"
+                th:classappend="${product.active} ? 'badge-delivered' : 'badge-cancelled'"
+                th:text="${product.active} ? 'Hiển thị' : 'Ẩn'"
+                >Hiển thị</span
+              >
+            </td>
+            <td>
+              <a
+                th:href="@{/admin/products/edit/{id}(id=${product.id})}"
+                class="btn btn-sm btn-primary"
+              >
+                <i class="fas fa-edit"></i>
+              </a>
+              <a
+                th:href="@{/admin/products/delete/{id}(id=${product.id})}"
+                class="btn btn-sm btn-danger"
+                onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?');"
+              >
+                <i class="fas fa-trash"></i>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Pagination -->
+      <div style="margin-top: 20px; display: flex; justify-content: center">
+        <nav th:if="${products.totalPages > 1}">
+          <a
+            th:href="@{/admin/products(page=${products.number - 1})}"
+            th:if="${products.number > 0}"
+            class="btn btn-sm"
+            >Trước</a
+          >
+          <span th:each="i : ${#numbers.sequence(0, products.totalPages - 1)}">
+            <a
+              th:href="@{/admin/products(page=${i})}"
+              th:text="${i + 1}"
+              th:classappend="${i == products.number} ? 'btn-primary' : ''"
+              class="btn btn-sm"
+              >1</a
+            >
+          </span>
+          <a
+            th:href="@{/admin/products(page=${products.number + 1})}"
+            th:if="${products.number < products.totalPages - 1}"
+            class="btn btn-sm"
+            >Sau</a
+          >
+        </nav>
+      </div>
+    </div>
+  </body>
+</html>

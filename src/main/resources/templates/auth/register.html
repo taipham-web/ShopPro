@@ -1,0 +1,293 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng ký - SportWear Shop</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #1a1a2e;
+        font-family: 'Segoe UI', system-ui, sans-serif;
+        padding: 20px;
+      }
+      .auth-wrapper {
+        display: flex;
+        width: 960px;
+        max-width: 96vw;
+        min-height: 620px;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+      }
+      /* ---- LEFT BANNER ---- */
+      .auth-banner {
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+        min-width: 0;
+      }
+      .auth-banner img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .auth-banner-back {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        color: rgba(255,255,255,0.75);
+        font-size: 0.8rem;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        z-index: 5;
+        transition: color 0.2s;
+      }
+      .auth-banner-back:hover { color: #fff; }
+
+      /* ---- RIGHT FORM ---- */
+      .auth-form-side {
+        width: 460px;
+        flex-shrink: 0;
+        background: #fff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 44px 44px;
+        overflow-y: auto;
+      }
+      .auth-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #111;
+        margin-bottom: 6px;
+        letter-spacing: -0.5px;
+      }
+      .auth-subtitle {
+        font-size: 0.88rem;
+        color: #888;
+        margin-bottom: 28px;
+      }
+      .auth-alert {
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .auth-alert-danger { background: #fff0f0; color: #c0392b; border: 1px solid #f5c6cb; }
+      .auth-alert-success { background: #f0fff4; color: #27ae60; border: 1px solid #b7ebc8; }
+
+      .auth-field { margin-bottom: 16px; }
+      .auth-field-label {
+        font-size: 0.8rem;
+        font-style: italic;
+        color: #555;
+        margin-bottom: 6px;
+        display: block;
+      }
+      .auth-field-error {
+        font-size: 0.78rem;
+        color: #dc3545;
+        margin-top: 4px;
+        display: block;
+      }
+      .auth-input-wrap {
+        display: flex;
+        align-items: center;
+        background: #f4f5f7;
+        border-radius: 10px;
+        padding: 0 14px;
+        gap: 10px;
+        border: 1.5px solid transparent;
+        transition: border-color 0.2s, background 0.2s;
+      }
+      .auth-input-wrap:focus-within {
+        background: #fff;
+        border-color: #0052cc;
+      }
+      .auth-input-wrap i {
+        color: #aaa;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+      }
+      .auth-input-wrap input,
+      .auth-input-wrap textarea {
+        border: none;
+        background: transparent;
+        outline: none;
+        width: 100%;
+        padding: 12px 0;
+        font-size: 0.88rem;
+        color: #212529;
+        resize: none;
+        font-family: inherit;
+      }
+      .auth-grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .auth-btn {
+        width: 100%;
+        padding: 13px;
+        background: #0052cc;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 6px;
+        transition: background 0.2s, transform 0.2s;
+        letter-spacing: 0.3px;
+      }
+      .auth-btn:hover {
+        background: #0041a8;
+        transform: translateY(-1px);
+      }
+      .auth-terms {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 16px;
+        margin-top: 4px;
+      }
+      .auth-terms input { margin-top: 3px; flex-shrink: 0; }
+      .auth-terms span { font-size: 0.8rem; color: #777; }
+      .auth-terms a { color: #0052cc; text-decoration: none; }
+      .auth-terms a:hover { text-decoration: underline; }
+      .auth-footer-text {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 0.87rem;
+        color: #777;
+      }
+      .auth-footer-text a {
+        color: #0052cc;
+        font-weight: 600;
+        text-decoration: none;
+        margin-left: 4px;
+      }
+      .auth-footer-text a:hover { text-decoration: underline; }
+
+      @media (max-width: 640px) {
+        .auth-banner { display: none; }
+        .auth-form-side { width: 100%; padding: 36px 24px; }
+        .auth-wrapper { border-radius: 12px; }
+        .auth-grid-2 { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="auth-wrapper">
+      <!-- LEFT: Sporty Banner -->
+      <div class="auth-banner">
+        <a th:href="@{/}" class="auth-banner-back">
+          <i class="fas fa-arrow-left"></i> Trang chủ
+        </a>
+        <img th:src="@{/images/register-banner.png}" alt="Get In Shape - SportWear" />
+      </div>
+
+      <!-- RIGHT: Register Form -->
+      <div class="auth-form-side">
+        <h1 class="auth-title">Đăng ký tài khoản</h1>
+        <p class="auth-subtitle">Đăng ký tài khoản mới để tiếp tục</p>
+
+        <!-- Alerts -->
+        <div th:if="${error}" class="auth-alert auth-alert-danger">
+          <i class="fas fa-exclamation-circle"></i>
+          <span th:text="${error}">Lỗi</span>
+        </div>
+
+        <form th:action="@{/auth/register}" method="post" th:object="${registerForm}">
+
+          <!-- Username + FullName -->
+          <div class="auth-grid-2">
+            <div class="auth-field">
+              <label class="auth-field-label">Tên đăng nhập *</label>
+              <div class="auth-input-wrap">
+                <i class="fas fa-user"></i>
+                <input type="text" th:field="*{username}" placeholder="username" required />
+              </div>
+              <small class="auth-field-error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></small>
+            </div>
+            <div class="auth-field">
+              <label class="auth-field-label">Họ và tên</label>
+              <div class="auth-input-wrap">
+                <i class="fas fa-id-card"></i>
+                <input type="text" th:field="*{fullName}" placeholder="Nguyễn Văn A" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div class="auth-field">
+            <label class="auth-field-label">Email Address *</label>
+            <div class="auth-input-wrap">
+              <i class="fas fa-envelope"></i>
+              <input type="email" th:field="*{email}" placeholder="yourname@email.com" required />
+            </div>
+            <small class="auth-field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small>
+          </div>
+
+          <!-- Phone -->
+          <div class="auth-field">
+            <label class="auth-field-label">Số điện thoại</label>
+            <div class="auth-input-wrap">
+              <i class="fas fa-phone"></i>
+              <input type="tel" th:field="*{phone}" placeholder="0909 xxx xxx" />
+            </div>
+          </div>
+
+          <!-- Password + Confirm -->
+          <div class="auth-grid-2">
+            <div class="auth-field">
+              <label class="auth-field-label">Password *</label>
+              <div class="auth-input-wrap">
+                <i class="fas fa-lock"></i>
+                <input type="password" th:field="*{password}" placeholder="••••••••" required />
+              </div>
+              <small class="auth-field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></small>
+            </div>
+            <div class="auth-field">
+              <label class="auth-field-label">Password again *</label>
+              <div class="auth-input-wrap">
+                <i class="fas fa-lock"></i>
+                <input type="password" th:field="*{confirmPassword}" placeholder="••••••••" required />
+              </div>
+            </div>
+          </div>
+
+          <!-- Terms -->
+          <label class="auth-terms">
+            <input type="checkbox" required />
+            <span>
+              Tôi đồng ý với
+              <a href="#">Điều khoản dịch vụ</a> và
+              <a href="#">Chính sách bảo mật</a>
+            </span>
+          </label>
+
+          <button type="submit" class="auth-btn">Đăng Ký</button>
+        </form>
+
+        <p class="auth-footer-text">
+          Đã có tài khoản?
+          <a th:href="@{/auth/login}">Đăng Nhập</a>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

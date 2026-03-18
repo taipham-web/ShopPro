@@ -1,0 +1,236 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản lý danh mục - SportWear Admin</title>
+    <link rel="stylesheet" th:href="@{/css/admin-style.css}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Topbar -->
+      <div class="topbar">
+        <h4><i class="fas fa-list"></i> Quản lý danh mục</h4>
+        <a
+          th:href="@{/admin/categories/create}"
+          class="btn"
+          style="
+            padding: 10px 20px;
+            background: #1cc88a;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+          "
+        >
+          <i class="fas fa-plus"></i> Thêm danh mục
+        </a>
+      </div>
+
+      <!-- Alert Messages -->
+      <div
+        th:if="${successMessage}"
+        class="alert alert-success"
+        style="
+          padding: 15px;
+          margin-bottom: 20px;
+          background-color: #d4edda;
+          border: 1px solid #c3e6cb;
+          border-radius: 5px;
+          color: #155724;
+        "
+      >
+        <i class="fas fa-check-circle"></i>
+        <span th:text="${successMessage}"></span>
+      </div>
+      <div
+        th:if="${errorMessage}"
+        class="alert alert-danger"
+        style="
+          padding: 15px;
+          margin-bottom: 20px;
+          background-color: #f8d7da;
+          border: 1px solid #f5c6cb;
+          border-radius: 5px;
+          color: #721c24;
+        "
+      >
+        <i class="fas fa-exclamation-circle"></i>
+        <span th:text="${errorMessage}"></span>
+      </div>
+
+      <!-- Categories Table -->
+      <div
+        class="card"
+        style="
+          background: white;
+          padding: 20px;
+          border-radius: 10px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        "
+      >
+        <div style="overflow-x: auto">
+          <table style="width: 100%; border-collapse: collapse">
+            <thead>
+              <tr style="background: #f8f9fc">
+                <th
+                  style="
+                    padding: 15px;
+                    text-align: left;
+                    border-bottom: 2px solid #e3e6f0;
+                  "
+                >
+                  ID
+                </th>
+                <th
+                  style="
+                    padding: 15px;
+                    text-align: left;
+                    border-bottom: 2px solid #e3e6f0;
+                  "
+                >
+                  Tên danh mục
+                </th>
+                <th
+                  style="
+                    padding: 15px;
+                    text-align: center;
+                    border-bottom: 2px solid #e3e6f0;
+                  "
+                >
+                  Số sản phẩm
+                </th>
+                <th
+                  style="
+                    padding: 15px;
+                    text-align: center;
+                    border-bottom: 2px solid #e3e6f0;
+                  "
+                >
+                  Trạng thái
+                </th>
+                <th
+                  style="
+                    padding: 15px;
+                    text-align: center;
+                    border-bottom: 2px solid #e3e6f0;
+                  "
+                >
+                  Hành động
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                th:each="category : ${categories}"
+                style="border-bottom: 1px solid #e3e6f0"
+              >
+                <td style="padding: 15px" th:text="${category.id}">#1</td>
+                <td style="padding: 15px">
+                  <strong th:text="${category.name}">Tên danh mục</strong>
+                  <p
+                    th:if="${category.description}"
+                    style="margin: 5px 0 0; color: #858796; font-size: 0.85rem"
+                    th:text="${category.description}"
+                  >
+                    Mô tả
+                  </p>
+                </td>
+                <td
+                  style="padding: 15px; text-align: center"
+                  th:text="${category.products.size()}"
+                >
+                  0
+                </td>
+                <td style="padding: 15px; text-align: center">
+                  <form
+                    th:action="@{/admin/categories/toggle-active/{id}(id=${category.id})}"
+                    method="post"
+                    style="display: inline"
+                  >
+                    <button
+                      type="submit"
+                      th:style="${category.active ? 'background: #1cc88a; color: white; padding: 5px 15px; border-radius: 20px; border: none; cursor: pointer;' : 'background: #858796; color: white; padding: 5px 15px; border-radius: 20px; border: none; cursor: pointer;'}"
+                      th:text="${category.active ? 'Hiển thị' : 'Đã ẩn'}"
+                    >
+                      Active
+                    </button>
+                  </form>
+                  <form
+                    th:action="@{/admin/categories/toggle-featured/{id}(id=${category.id})}"
+                    method="post"
+                    style="display: inline; margin-left: 5px"
+                  >
+                    <button
+                      type="submit"
+                      th:style="${category.featured ? 'background: #f6c23e; color: white; padding: 5px 12px; border-radius: 20px; border: none; cursor: pointer;' : 'background: #e3e6f0; color: #858796; padding: 5px 12px; border-radius: 20px; border: none; cursor: pointer;'}"
+                      th:title="${category.featured ? 'Bỏ nổi bật' : 'Đánh dấu nổi bật'}"
+                    >
+                      <i class="fas fa-star"></i>
+                    </button>
+                  </form>
+                </td>
+                <td style="padding: 15px; text-align: center">
+                  <a
+                    th:href="@{/admin/categories/edit/{id}(id=${category.id})}"
+                    style="
+                      padding: 8px 12px;
+                      background: #4e73df;
+                      color: white;
+                      border-radius: 5px;
+                      text-decoration: none;
+                      margin-right: 5px;
+                    "
+                  >
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  <form
+                    th:action="@{/admin/categories/delete/{id}(id=${category.id})}"
+                    method="post"
+                    style="display: inline"
+                    onsubmit="
+                      return confirm('Bạn có chắc muốn xóa danh mục này?');
+                    "
+                  >
+                    <button
+                      type="submit"
+                      style="
+                        padding: 8px 12px;
+                        background: #e74a3b;
+                        color: white;
+                        border: none;
+                        border-radius: 5px;
+                        cursor: pointer;
+                      "
+                    >
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              <tr th:if="${#lists.isEmpty(categories)}">
+                <td
+                  colspan="6"
+                  style="padding: 30px; text-align: center; color: #858796"
+                >
+                  <i
+                    class="fas fa-folder-open"
+                    style="font-size: 3rem; margin-bottom: 15px"
+                  ></i>
+                  <p>Không có danh mục nào</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

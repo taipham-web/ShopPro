@@ -1,0 +1,379 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản lý sản phẩm - SportWear Admin</title>
+    <link rel="stylesheet" th:href="@{/css/admin-style.css}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Topbar -->
+      <div class="topbar">
+        <h4><i class="fas fa-box"></i> Quản lý sản phẩm</h4>
+        <a
+          th:href="@{/admin/products/create}"
+          class="btn"
+          style="
+            padding: 10px 20px;
+            background: #1cc88a;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+          "
+        >
+          <i class="fas fa-plus"></i> Thêm sản phẩm
+        </a>
+      </div>
+
+      <!-- Alert Messages -->
+      <div
+        th:if="${successMessage}"
+        class="alert alert-success"
+        style="
+          padding: 15px;
+          margin-bottom: 20px;
+          background-color: #d4edda;
+          border: 1px solid #c3e6cb;
+          border-radius: 5px;
+          color: #155724;
+        "
+      >
+        <i class="fas fa-check-circle"></i>
+        <span th:text="${successMessage}"></span>
+      </div>
+      <div
+        th:if="${errorMessage}"
+        class="alert alert-danger"
+        style="
+          padding: 15px;
+          margin-bottom: 20px;
+          background-color: #f8d7da;
+          border: 1px solid #f5c6cb;
+          border-radius: 5px;
+          color: #721c24;
+        "
+      >
+        <i class="fas fa-exclamation-circle"></i>
+        <span th:text="${errorMessage}"></span>
+      </div>
+
+      <!-- Search -->
+      <div
+        class="card"
+        style="
+          background: white;
+          padding: 20px;
+          border-radius: 10px;
+          margin-bottom: 20px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        "
+      >
+        <form
+          th:action="@{/admin/products}"
+          method="get"
+          style="display: flex; gap: 15px; align-items: center"
+        >
+          <input
+            type="text"
+            name="keyword"
+            th:value="${keyword}"
+            placeholder="Tìm kiếm sản phẩm..."
+            style="
+              flex: 1;
+              padding: 12px 15px;
+              border: 1px solid #ddd;
+              border-radius: 5px;
+            "
+          />
+          <button
+            type="submit"
+            class="btn"
+            style="
+              padding: 12px 25px;
+              background: #4e73df;
+              color: white;
+              border: none;
+              border-radius: 5px;
+              cursor: pointer;
+            "
+          >
+            <i class="fas fa-search"></i> Tìm kiếm
+          </button>
+        </form>
+      </div>
+
+      <!-- Products Table -->
+      <div
+        class="card"
+        style="
+          background: white;
+          padding: 20px;
+          border-radius: 10px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        "
+      >
+        <div style="overflow-x: auto">
+          <table style="width: 100%; border-collapse: collapse">
+            <thead>
+              <tr style="background: #f8f9fc">
+                <th
+                  style="
+                    padding: 15px;
+                    text-align: left;
+                    border-bottom: 2px solid #e3e6f0;
+                  "
+                >
+                  Hình ảnh
+                </th>
+                <th
+                  style="
+                    padding: 15px;
+                    text-align: left;
+                    border-bottom: 2px solid #e3e6f0;
+                  "
+                >
+                  Tên sản phẩm
+                </th>
+                <th
+                  style="
+                    padding: 15px;
+                    text-align: left;
+                    border-bottom: 2px solid #e3e6f0;
+                  "
+                >
+                  Danh mục
+                </th>
+                <th
+                  style="
+                    padding: 15px;
+                    text-align: right;
+                    border-bottom: 2px solid #e3e6f0;
+                  "
+                >
+                  Giá
+                </th>
+                <th
+                  style="
+                    padding: 15px;
+                    text-align: center;
+                    border-bottom: 2px solid #e3e6f0;
+                  "
+                >
+                  Tồn kho
+                </th>
+                <th
+                  style="
+                    padding: 15px;
+                    text-align: center;
+                    border-bottom: 2px solid #e3e6f0;
+                  "
+                >
+                  Trạng thái
+                </th>
+                <th
+                  style="
+                    padding: 15px;
+                    text-align: center;
+                    border-bottom: 2px solid #e3e6f0;
+                  "
+                >
+                  Hành động
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                th:each="product : ${products}"
+                style="border-bottom: 1px solid #e3e6f0"
+              >
+                <td style="padding: 15px">
+                  <img
+                    th:src="${product.image}"
+                    alt=""
+                    style="
+                      width: 60px;
+                      height: 60px;
+                      object-fit: cover;
+                      border-radius: 5px;
+                    "
+                    onerror="this.src = '/images/no-image.png'"
+                  />
+                </td>
+                <td style="padding: 15px">
+                  <strong th:text="${product.name}">Tên sản phẩm</strong>
+                </td>
+                <td
+                  style="padding: 15px"
+                  th:text="${product.category != null ? product.category.name : 'Chưa phân loại'}"
+                >
+                  Danh mục
+                </td>
+                <td style="padding: 15px; text-align: right">
+                  <span
+                    th:if="${product.salePrice != null}"
+                    style="
+                      text-decoration: line-through;
+                      color: #858796;
+                      display: block;
+                      font-size: 0.85rem;
+                    "
+                    th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"
+                    >500,000 đ</span
+                  >
+                  <span
+                    style="color: #e74a3b; font-weight: bold"
+                    th:text="${#numbers.formatDecimal(product.salePrice != null ? product.salePrice : product.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"
+                    >400,000 đ</span
+                  >
+                </td>
+                <td style="padding: 15px; text-align: center">
+                  <span
+                    th:text="${product.quantity}"
+                    th:style="${product.quantity <= 5 ? 'color: #e74a3b; font-weight: bold;' : ''}"
+                    >100</span
+                  >
+                  <span
+                    th:if="${product.quantity <= 5}"
+                    style="display: block; font-size: 0.75rem; color: #e74a3b"
+                    >Sắp hết</span
+                  >
+                </td>
+                <td style="padding: 15px; text-align: center">
+                  <form
+                    th:action="@{/admin/products/toggle-featured/{id}(id=${product.id})}"
+                    method="post"
+                    style="display: inline"
+                  >
+                    <button
+                      type="submit"
+                      th:style="${product.featured ? 'background: #f6c23e; color: white; padding: 5px 12px; border-radius: 20px; border: none; cursor: pointer;' : 'background: #e3e6f0; color: #858796; padding: 5px 12px; border-radius: 20px; border: none; cursor: pointer;'}"
+                      th:title="${product.featured ? 'Bỏ nổi bật' : 'Đánh dấu nổi bật'}"
+                    >
+                      <i class="fas fa-star"></i>
+                    </button>
+                  </form>
+                </td>
+                <td style="padding: 15px; text-align: center">
+                  <a
+                    th:href="@{/admin/products/edit/{id}(id=${product.id})}"
+                    style="
+                      padding: 8px 12px;
+                      background: #4e73df;
+                      color: white;
+                      border-radius: 5px;
+                      text-decoration: none;
+                      margin-right: 5px;
+                    "
+                  >
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  <form
+                    th:action="@{/admin/products/delete/{id}(id=${product.id})}"
+                    method="post"
+                    style="display: inline"
+                    onsubmit="
+                      return confirm('Bạn có chắc muốn xóa sản phẩm này?');
+                    "
+                  >
+                    <button
+                      type="submit"
+                      style="
+                        padding: 8px 12px;
+                        background: #e74a3b;
+                        color: white;
+                        border: none;
+                        border-radius: 5px;
+                        cursor: pointer;
+                      "
+                    >
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              <tr th:if="${#lists.isEmpty(products)}">
+                <td
+                  colspan="7"
+                  style="padding: 30px; text-align: center; color: #858796"
+                >
+                  <i
+                    class="fas fa-box-open"
+                    style="font-size: 3rem; margin-bottom: 15px"
+                  ></i>
+                  <p>Không có sản phẩm nào</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div
+          th:if="${totalPages > 1}"
+          style="
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+          "
+        >
+          <a
+            th:if="${currentPage > 0}"
+            th:href="@{/admin/products(page=${currentPage - 1}, keyword=${keyword})}"
+            style="
+              width: 44px;
+              height: 44px;
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              border: 1px solid #ddd;
+              border-radius: 8px;
+              text-decoration: none;
+              color: #4e73df;
+              box-sizing: border-box;
+            "
+          >
+            <i class="fas fa-chevron-left" style="line-height: 1"></i>
+          </a>
+          <th:block th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+            <a
+              th:href="@{/admin/products(page=${i}, keyword=${keyword})}"
+              th:text="${i + 1}"
+              th:style="${i == currentPage} ? 'width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #4e73df; border-radius: 8px; text-decoration: none; background: #4e73df; color: white; box-sizing: border-box;' : 'width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #ddd; border-radius: 8px; text-decoration: none; color: #4e73df; box-sizing: border-box;'"
+            >
+              1
+            </a>
+          </th:block>
+          <a
+            th:if="${currentPage < totalPages - 1}"
+            th:href="@{/admin/products(page=${currentPage + 1}, keyword=${keyword})}"
+            style="
+              width: 44px;
+              height: 44px;
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              border: 1px solid #ddd;
+              border-radius: 8px;
+              text-decoration: none;
+              color: #4e73df;
+              box-sizing: border-box;
+            "
+          >
+            <i class="fas fa-chevron-right" style="line-height: 1"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

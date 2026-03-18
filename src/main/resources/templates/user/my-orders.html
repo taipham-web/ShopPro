@@ -1,0 +1,621 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đơn hàng của tôi - SportWear Shop</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+      /* ===== Layout ===== */
+      .orders-container {
+        max-width: 1200px;
+        margin: 30px auto;
+        padding: 0 20px;
+      }
+      .orders-wrapper {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 30px;
+        align-items: start;
+      }
+
+      /* ===== Sidebar (reuse profile style) ===== */
+      .profile-sidebar {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        padding: 25px;
+        position: sticky;
+        top: 20px;
+      }
+      .profile-avatar { text-align: center; margin-bottom: 20px; }
+      .avatar-circle {
+        width: 90px; height: 90px;
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 12px;
+        font-size: 36px; color: white;
+        box-shadow: 0 6px 20px rgba(0,123,255,0.3);
+      }
+      .profile-avatar h3 { margin: 0; color: #333; font-size: 1.1rem; }
+      .profile-avatar p  { color: #6c757d; font-size: 0.85rem; margin: 4px 0 0; }
+
+      .profile-menu { list-style: none; padding: 0; margin: 0; }
+      .profile-menu li { margin-bottom: 4px; }
+      .profile-menu a {
+        display: flex; align-items: center; gap: 12px;
+        padding: 11px 14px;
+        color: #444; text-decoration: none;
+        border-radius: 10px;
+        transition: all 0.25s;
+        font-size: 0.95rem;
+      }
+      .profile-menu a:hover { background: #e7f1ff; color: #007bff; }
+      .profile-menu a.active {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        color: white;
+        box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+      }
+      .profile-menu a i { width: 18px; text-align: center; }
+
+      /* ===== Stats Row ===== */
+      .stats-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      .stat-card {
+        background: white;
+        border-radius: 14px;
+        padding: 18px 20px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.07);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+      .stat-icon {
+        width: 48px; height: 48px;
+        border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.3rem;
+        flex-shrink: 0;
+      }
+      .stat-info p { margin: 0; font-size: 0.8rem; color: #888; }
+      .stat-info h3 { margin: 4px 0 0; font-size: 1.6rem; font-weight: 700; color: #333; }
+
+      /* ===== Filter tabs ===== */
+      .filter-bar {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 20px;
+        background: white;
+        padding: 8px;
+        border-radius: 14px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .filter-btn {
+        padding: 8px 18px;
+        border: none;
+        border-radius: 10px;
+        background: transparent;
+        color: #666;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 500;
+        white-space: nowrap;
+        transition: all 0.2s;
+      }
+      .filter-btn:hover { background: #f0f4ff; color: #007bff; }
+      .filter-btn.active {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        color: white;
+        box-shadow: 0 3px 10px rgba(0,123,255,0.3);
+      }
+
+      /* ===== Order Cards ===== */
+      .order-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.07);
+        margin-bottom: 16px;
+        overflow: hidden;
+        border: 1px solid #f0f0f0;
+      }
+
+      /* Card Header */
+      .order-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        border-bottom: 1px solid #f5f5f5;
+        background: #fafbff;
+      }
+      .order-code-info { display: flex; align-items: center; gap: 12px; }
+      .order-code-info a {
+        font-weight: 700;
+        color: #333;
+        text-decoration: none;
+        font-size: 1rem;
+      }
+      .order-date { font-size: 0.82rem; color: #999; margin-top: 2px; }
+
+      /* Status badge */
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .status-pending   { background: #fff8e6; color: #e6a817; border: 1px solid #ffeeb3; }
+      .status-confirmed { background: #e6f7fb; color: #17a2b8; border: 1px solid #b3ecf5; }
+      .status-shipping  { background: #e6eeff; color: #4e73df; border: 1px solid #b3c6ff; }
+      .status-delivered { background: #e6f9f0; color: #1cc88a; border: 1px solid #b3efd7; }
+      .status-cancelled { background: #fdecea; color: #e74a3b; border: 1px solid #f8c4bf; }
+
+      /* Progress timeline */
+      .order-progress {
+        display: flex;
+        align-items: center;
+        padding: 16px 20px 12px;
+        gap: 0;
+      }
+      .progress-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1;
+        position: relative;
+      }
+      .progress-step:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        top: 14px;
+        left: 50%;
+        width: 100%;
+        height: 2px;
+        background: #e9ecef;
+        z-index: 0;
+      }
+      .progress-step.done:not(:last-child)::after { background: #007bff; }
+      .step-dot {
+        width: 28px; height: 28px;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.75rem;
+        z-index: 1;
+        font-weight: 600;
+      }
+      .step-dot.done    { background: #007bff; color: white; box-shadow: 0 3px 10px rgba(0,123,255,0.4); }
+      .step-dot.active  { background: #fff; border: 2px solid #007bff; color: #007bff; box-shadow: 0 0 0 4px rgba(0,123,255,0.15); }
+      .step-dot.pending { background: #f0f0f0; color: #ccc; }
+      .step-dot.cancelled { background: #fdecea; border: 2px solid #e74a3b; color: #e74a3b; }
+      .step-label { font-size: 0.72rem; color: #999; margin-top: 6px; font-weight: 500; }
+      .step-label.done   { color: #007bff; }
+      .step-label.active { color: #007bff; font-weight: 600; }
+
+      /* Card Body - products */
+      .order-card-body { padding: 16px 20px; }
+      .order-products { display: flex; flex-direction: column; gap: 12px; }
+      .product-row {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .product-img {
+        width: 56px; height: 56px;
+        border-radius: 10px;
+        object-fit: cover;
+        border: 1px solid #f0f0f0;
+        flex-shrink: 0;
+      }
+      .product-info { flex: 1; }
+      .product-name { font-size: 0.9rem; font-weight: 500; color: #333; margin: 0; }
+      .product-meta { font-size: 0.8rem; color: #999; margin: 3px 0 0; }
+      .product-price { font-weight: 600; color: #e74a3b; font-size: 0.9rem; white-space: nowrap; }
+
+      .more-items {
+        font-size: 0.82rem;
+        color: #007bff;
+        padding: 6px 0 0;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      /* Card Footer */
+      .order-card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 20px;
+        border-top: 1px solid #f5f5f5;
+        background: #fafbff;
+      }
+      .total-info { display: flex; align-items: center; gap: 6px; }
+      .total-label { font-size: 0.85rem; color: #888; }
+      .total-amount { font-size: 1.15rem; font-weight: 700; color: #e74a3b; }
+      .payment-method-badge {
+        font-size: 0.78rem;
+        padding: 4px 10px;
+        border-radius: 8px;
+        background: #f0f4ff;
+        color: #4e73df;
+        font-weight: 500;
+      }
+
+      .card-actions { display: flex; gap: 8px; }
+      .btn-outline {
+        padding: 8px 16px;
+        border: 1.5px solid #007bff;
+        background: transparent;
+        color: #007bff;
+        border-radius: 10px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s;
+      }
+      .btn-outline:hover { background: #007bff; color: white; }
+      .btn-filled {
+        padding: 8px 16px;
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s;
+        box-shadow: 0 3px 10px rgba(0,123,255,0.3);
+      }
+      .btn-filled:hover { transform: translateY(-1px); box-shadow: 0 5px 15px rgba(0,123,255,0.4); }
+
+      /* Empty state */
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.07);
+      }
+      .empty-icon {
+        width: 100px; height: 100px;
+        background: linear-gradient(135deg, #e7f1ff, #cce0ff);
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 2.5rem;
+        color: #007bff;
+      }
+      .empty-state h3 { color: #333; margin: 0 0 10px; }
+      .empty-state p  { color: #888; margin: 0 0 24px; }
+
+      @media (max-width: 768px) {
+        .orders-wrapper  { grid-template-columns: 1fr; }
+        .stats-row       { grid-template-columns: 1fr 1fr; }
+        .profile-sidebar { position: static; }
+      }
+    </style>
+  </head>
+  <body>
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <div class="orders-container">
+      <div class="orders-wrapper">
+
+        <!-- ===== Sidebar ===== -->
+        <div class="profile-sidebar">
+          <div class="profile-avatar">
+            <div class="avatar-circle">
+              <i class="fas fa-user"></i>
+            </div>
+            <h3 th:text="${user?.fullName ?: user?.username}">Người dùng</h3>
+            <p th:text="${user?.email}">email@example.com</p>
+          </div>
+
+          <ul class="profile-menu">
+            <li>
+              <a th:href="@{/user/profile}">
+                <i class="fas fa-user-edit"></i> Thông tin cá nhân
+              </a>
+            </li>
+            <li>
+              <a th:href="@{/user/profile}" onclick="">
+                <i class="fas fa-lock"></i> Đổi mật khẩu
+              </a>
+            </li>
+            <li>
+              <a th:href="@{/user/orders}" class="active">
+                <i class="fas fa-shopping-bag"></i> Đơn hàng của tôi
+              </a>
+            </li>
+            <li>
+              <a th:href="@{/user/wishlist}">
+                <i class="fas fa-heart"></i> Sản phẩm yêu thích
+              </a>
+            </li>
+            <li>
+              <a th:href="@{/auth/logout}" style="color: #dc3545">
+                <i class="fas fa-sign-out-alt"></i> Đăng xuất
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- ===== Main Content ===== -->
+        <div>
+          <!-- Stats Row -->
+          <div class="stats-row">
+            <div class="stat-card">
+              <div class="stat-icon" style="background:#e7f1ff;">
+                <i class="fas fa-receipt" style="color:#007bff"></i>
+              </div>
+              <div class="stat-info">
+                <p>Tổng đơn</p>
+                <h3 th:text="${totalOrders}">0</h3>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon" style="background:#fff8e6;">
+                <i class="fas fa-clock" style="color:#e6a817"></i>
+              </div>
+              <div class="stat-info">
+                <p>Chờ xác nhận</p>
+                <h3 th:text="${pendingCount}">0</h3>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon" style="background:#e6eeff;">
+                <i class="fas fa-truck" style="color:#4e73df"></i>
+              </div>
+              <div class="stat-info">
+                <p>Đang giao</p>
+                <h3 th:text="${shippingCount}">0</h3>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon" style="background:#e6f9f0;">
+                <i class="fas fa-check-circle" style="color:#1cc88a"></i>
+              </div>
+              <div class="stat-info">
+                <p>Hoàn thành</p>
+                <h3 th:text="${deliveredCount}">0</h3>
+              </div>
+            </div>
+          </div>
+
+          <!-- Filter bar -->
+          <div class="filter-bar">
+            <button class="filter-btn active" onclick="filterOrders('all', this)">
+              <i class="fas fa-list"></i> Tất cả
+            </button>
+            <button class="filter-btn" onclick="filterOrders('PENDING', this)">
+              <i class="fas fa-clock"></i> Chờ xác nhận
+            </button>
+            <button class="filter-btn" onclick="filterOrders('CONFIRMED', this)">
+              <i class="fas fa-check-circle"></i> Đã xác nhận
+            </button>
+            <button class="filter-btn" onclick="filterOrders('SHIPPING', this)">
+              <i class="fas fa-truck"></i> Đang giao
+            </button>
+            <button class="filter-btn" onclick="filterOrders('DELIVERED', this)">
+              <i class="fas fa-box-open"></i> Đã nhận
+            </button>
+            <button class="filter-btn" onclick="filterOrders('CANCELLED', this)">
+              <i class="fas fa-times-circle"></i> Đã hủy
+            </button>
+          </div>
+
+          <!-- Empty state -->
+          <div th:if="${#lists.isEmpty(orders)}" class="empty-state">
+            <div class="empty-icon"><i class="fas fa-shopping-bag"></i></div>
+            <h3>Bạn chưa có đơn hàng nào</h3>
+            <p>Khám phá các sản phẩm sport wear xịn xò và đặt hàng ngay!</p>
+            <a th:href="@{/products}" class="btn-filled">
+              <i class="fas fa-shopping-cart"></i> Mua sắm ngay
+            </a>
+          </div>
+
+          <!-- Order cards -->
+          <div id="ordersList">
+            <div th:each="order : ${orders}"
+                 class="order-card"
+                 th:attr="data-status=${order.status.name()}">
+
+              <!-- Card Header -->
+              <div class="order-card-header">
+                <div class="order-code-info">
+                  <div>
+                    <a th:href="@{/user/orders/{code}(code=${order.orderCode})}"
+                       th:text="${order.orderCode}">ORD001</a>
+                    <div class="order-date">
+                      <i class="fas fa-calendar-alt" style="margin-right:4px"></i>
+                      <span th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+                    </div>
+                  </div>
+                </div>
+                <span class="status-badge"
+                      th:classappend="${order.status.name() == 'PENDING'   ? 'status-pending'   :
+                                       order.status.name() == 'CONFIRMED' ? 'status-confirmed' :
+                                       order.status.name() == 'SHIPPING'  ? 'status-shipping'  :
+                                       order.status.name() == 'DELIVERED' ? 'status-delivered' :
+                                                                             'status-cancelled'}">
+                  <i th:classappend="${order.status.name() == 'PENDING'   ? 'fas fa-clock'         :
+                                       order.status.name() == 'CONFIRMED' ? 'fas fa-check-circle'  :
+                                       order.status.name() == 'SHIPPING'  ? 'fas fa-truck'         :
+                                       order.status.name() == 'DELIVERED' ? 'fas fa-box-open'      :
+                                                                             'fas fa-times-circle'}"></i>
+                  <span th:text="${order.status.name() == 'PENDING'   ? 'Chờ xác nhận' :
+                                   order.status.name() == 'CONFIRMED' ? 'Đã xác nhận'  :
+                                   order.status.name() == 'SHIPPING'  ? 'Đang giao'    :
+                                   order.status.name() == 'DELIVERED' ? 'Đã nhận hàng' :
+                                                                         'Đã hủy'}"></span>
+                </span>
+              </div>
+
+              <!-- Progress Timeline (chỉ show khi không bị hủy) -->
+              <div class="order-progress" th:if="${order.status.name() != 'CANCELLED'}">
+                <!-- Bước 1: Đặt hàng -->
+                <div class="progress-step done">
+                  <div class="step-dot done"><i class="fas fa-check"></i></div>
+                  <span class="step-label done">Đặt hàng</span>
+                </div>
+                <!-- Bước 2: Xác nhận -->
+                <div class="progress-step"
+                     th:classappend="${order.status.name() == 'CONFIRMED' or order.status.name() == 'SHIPPING' or order.status.name() == 'DELIVERED'} ? 'done' : ''">
+                  <div class="step-dot"
+                       th:classappend="${order.status.name() == 'CONFIRMED'} ? 'active' :
+                                        (${order.status.name() == 'SHIPPING' or order.status.name() == 'DELIVERED'} ? 'done' : 'pending')">
+                    <i class="fas fa-check" th:if="${order.status.name() == 'SHIPPING' or order.status.name() == 'DELIVERED'}"></i>
+                    <i class="fas fa-check-circle" th:if="${order.status.name() == 'CONFIRMED'}"></i>
+                    <span th:if="${order.status.name() == 'PENDING'}">2</span>
+                  </div>
+                  <span class="step-label"
+                        th:classappend="${order.status.name() == 'CONFIRMED' or order.status.name() == 'SHIPPING' or order.status.name() == 'DELIVERED'} ? 'done' : ''">
+                    Xác nhận
+                  </span>
+                </div>
+                <!-- Bước 3: Giao hàng -->
+                <div class="progress-step"
+                     th:classappend="${order.status.name() == 'DELIVERED'} ? 'done' : ''">
+                  <div class="step-dot"
+                       th:classappend="${order.status.name() == 'SHIPPING'} ? 'active' :
+                                        (${order.status.name() == 'DELIVERED'} ? 'done' : 'pending')">
+                    <i class="fas fa-check" th:if="${order.status.name() == 'DELIVERED'}"></i>
+                    <i class="fas fa-truck" th:if="${order.status.name() == 'SHIPPING'}"></i>
+                    <span th:if="${order.status.name() != 'SHIPPING' and order.status.name() != 'DELIVERED'}">3</span>
+                  </div>
+                  <span class="step-label"
+                        th:classappend="${order.status.name() == 'SHIPPING' or order.status.name() == 'DELIVERED'} ? 'done' : ''">
+                    Đang giao
+                  </span>
+                </div>
+                <!-- Bước 4: Hoàn thành -->
+                <div class="progress-step"
+                     th:classappend="${order.status.name() == 'DELIVERED'} ? 'done' : ''">
+                  <div class="step-dot"
+                       th:classappend="${order.status.name() == 'DELIVERED'} ? 'done' : 'pending'">
+                    <i class="fas fa-check" th:if="${order.status.name() == 'DELIVERED'}"></i>
+                    <span th:unless="${order.status.name() == 'DELIVERED'}">4</span>
+                  </div>
+                  <span class="step-label"
+                        th:classappend="${order.status.name() == 'DELIVERED'} ? 'done' : ''">
+                    Hoàn thành
+                  </span>
+                </div>
+              </div>
+
+              <!-- Cancelled notice -->
+              <div th:if="${order.status.name() == 'CANCELLED'}"
+                   style="padding: 12px 20px; background: #fdecea; display:flex; align-items:center; gap:10px; color:#e74a3b; font-size:0.88rem;">
+                <i class="fas fa-ban"></i>
+                <span>Đơn hàng này đã bị hủy.</span>
+              </div>
+
+              <!-- Products preview -->
+              <div class="order-card-body">
+                <div class="order-products">
+                  <div th:each="item, iterStat : ${order.orderDetails}"
+                       th:if="${iterStat.index < 2}"
+                       class="product-row">
+                    <img th:src="${item.product?.image}"
+                         th:onerror="this.src='/images/placeholder.png'"
+                         class="product-img"
+                         alt="" />
+                    <div class="product-info">
+                      <p class="product-name"
+                         th:text="${item.product?.name ?: 'Sản phẩm'}">Tên sản phẩm</p>
+                      <p class="product-meta">
+                        Số lượng: <span th:text="${item.quantity}">1</span>
+                      </p>
+                    </div>
+                    <span class="product-price"
+                          th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                      100,000 đ
+                    </span>
+                  </div>
+                  <!-- More items indicator -->
+                  <div th:if="${order.orderDetails.size() > 2}" class="more-items">
+                    <i class="fas fa-ellipsis-h"></i>
+                    <span>và <strong th:text="${order.orderDetails.size() - 2}">0</strong> sản phẩm khác</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card Footer -->
+              <div class="order-card-footer">
+                <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+                  <div class="total-info">
+                    <span class="total-label">Tổng tiền:</span>
+                    <span class="total-amount"
+                          th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                      0 đ
+                    </span>
+                  </div>
+                  <span class="payment-method-badge"
+                        th:text="${order.paymentMethod?.name() ?: 'COD'}">COD</span>
+                </div>
+                <div class="card-actions">
+                  <a th:href="@{/user/orders/{code}(code=${order.orderCode})}"
+                     class="btn-filled">
+                    <i class="fas fa-eye"></i> Chi tiết
+                  </a>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- No result after filter -->
+          <div id="noResult" style="display:none" class="empty-state">
+            <div class="empty-icon"><i class="fas fa-filter"></i></div>
+            <h3>Không có đơn hàng</h3>
+            <p>Không tìm thấy đơn hàng với trạng thái này.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <script>
+      function filterOrders(status, btn) {
+        // Update active button
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const cards = document.querySelectorAll('.order-card');
+        let visible = 0;
+
+        cards.forEach(card => {
+          if (status === 'all' || card.dataset.status === status) {
+            card.style.display = '';
+            visible++;
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        document.getElementById('noResult').style.display = (visible === 0) ? 'block' : 'none';
+      }
+    </script>
+  </body>
+</html>

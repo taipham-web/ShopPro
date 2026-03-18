@@ -1,0 +1,241 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chi tiết người dùng - SportWear Admin</title>
+    <link rel="stylesheet" th:href="@{/css/admin-style.css}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Topbar -->
+      <div class="topbar">
+        <h4><i class="fas fa-user"></i> Chi tiết người dùng</h4>
+        <a
+          th:href="@{/admin/users}"
+          class="btn"
+          style="
+            padding: 8px 15px;
+            background: #858796;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+          "
+        >
+          <i class="fas fa-arrow-left"></i> Quay lại
+        </a>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px">
+        <!-- User Info Card -->
+        <div
+          class="card"
+          style="
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+          "
+        >
+          <div
+            style="
+              width: 100px;
+              height: 100px;
+              border-radius: 50%;
+              background: #4e73df;
+              color: white;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 2.5rem;
+              font-weight: bold;
+              margin: 0 auto 20px;
+            "
+            th:text="${user.fullName != null ? user.fullName.substring(0, 1).toUpperCase() : user.username.substring(0, 1).toUpperCase()}"
+          >
+            A
+          </div>
+
+          <h3
+            th:text="${user.fullName != null ? user.fullName : user.username}"
+          >
+            Tên người dùng
+          </h3>
+          <p style="color: #858796" th:text="'@' + ${user.username}">
+            @username
+          </p>
+
+          <div style="margin: 20px 0">
+            <span
+              th:each="role : ${user.roles}"
+              th:text="${role.name.replace('ROLE_', '')}"
+              th:style="${role.name == 'ROLE_ADMIN' ? 'background: #e74a3b; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; margin: 2px;' : 'background: #4e73df; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; margin: 2px;'}"
+            >
+              USER
+            </span>
+          </div>
+
+          <div style="margin-top: 20px">
+            <span
+              th:if="${user.enabled}"
+              style="
+                background: #1cc88a;
+                color: white;
+                padding: 8px 20px;
+                border-radius: 20px;
+              "
+            >
+              <i class="fas fa-check-circle"></i> Đang hoạt động
+            </span>
+            <span
+              th:unless="${user.enabled}"
+              style="
+                background: #e74a3b;
+                color: white;
+                padding: 8px 20px;
+                border-radius: 20px;
+              "
+            >
+              <i class="fas fa-ban"></i> Đã bị khóa
+            </span>
+          </div>
+
+          <form
+            th:action="@{/admin/users/toggle-status/{id}(id=${user.id})}"
+            method="post"
+            style="margin-top: 20px"
+          >
+            <button
+              type="submit"
+              th:style="${user.enabled ? 'padding: 10px 25px; background: #f6c23e; color: white; border: none; border-radius: 5px; cursor: pointer;' : 'padding: 10px 25px; background: #1cc88a; color: white; border: none; border-radius: 5px; cursor: pointer;'}"
+            >
+              <i
+                th:class="${user.enabled ? 'fas fa-lock' : 'fas fa-unlock'}"
+              ></i>
+              <span th:text="${user.enabled ? 'Khóa tài khoản' : 'Mở khóa'}"
+                >Hành động</span
+              >
+            </button>
+          </form>
+        </div>
+
+        <!-- User Details -->
+        <div
+          class="card"
+          style="
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+          "
+        >
+          <h5 style="margin-bottom: 25px; color: #5a5c69">
+            <i class="fas fa-info-circle"></i> Thông tin chi tiết
+          </h5>
+
+          <table style="width: 100%">
+            <tr>
+              <td style="padding: 12px 0; color: #858796; width: 150px">
+                <i class="fas fa-id-card" style="width: 20px"></i> ID:
+              </td>
+              <td
+                style="padding: 12px 0; font-weight: bold"
+                th:text="${user.id}"
+              >
+                #1
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 12px 0; color: #858796">
+                <i class="fas fa-user" style="width: 20px"></i> Username:
+              </td>
+              <td style="padding: 12px 0" th:text="${user.username}">
+                username
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 12px 0; color: #858796">
+                <i class="fas fa-signature" style="width: 20px"></i> Họ tên:
+              </td>
+              <td
+                style="padding: 12px 0"
+                th:text="${user.fullName != null ? user.fullName : '—'}"
+              >
+                Họ tên
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 12px 0; color: #858796">
+                <i class="fas fa-envelope" style="width: 20px"></i> Email:
+              </td>
+              <td style="padding: 12px 0">
+                <a
+                  th:href="'mailto:' + ${user.email}"
+                  th:text="${user.email}"
+                  style="color: #4e73df"
+                  >email@example.com</a
+                >
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 12px 0; color: #858796">
+                <i class="fas fa-phone" style="width: 20px"></i> Số điện thoại:
+              </td>
+              <td
+                style="padding: 12px 0"
+                th:text="${user.phone != null ? user.phone : '—'}"
+              >
+                0123456789
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 12px 0; color: #858796">
+                <i class="fas fa-map-marker-alt" style="width: 20px"></i> Địa
+                chỉ:
+              </td>
+              <td
+                style="padding: 12px 0"
+                th:text="${user.address != null ? user.address : '—'}"
+              >
+                Địa chỉ
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 12px 0; color: #858796">
+                <i class="fas fa-calendar-plus" style="width: 20px"></i> Ngày
+                tạo:
+              </td>
+              <td
+                style="padding: 12px 0"
+                th:text="${user.createdAt != null ? #temporals.format(user.createdAt, 'dd/MM/yyyy HH:mm') : '—'}"
+              >
+                01/01/2024
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 12px 0; color: #858796">
+                <i class="fas fa-calendar-check" style="width: 20px"></i> Cập
+                nhật:
+              </td>
+              <td
+                style="padding: 12px 0"
+                th:text="${user.updatedAt != null ? #temporals.format(user.updatedAt, 'dd/MM/yyyy HH:mm') : '—'}"
+              >
+                01/01/2024
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

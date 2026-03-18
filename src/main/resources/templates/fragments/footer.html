@@ -1,0 +1,121 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <footer th:fragment="footer" class="footer">
+      <div class="container">
+        <div class="footer-grid">
+          <!-- About -->
+          <div class="footer-col">
+            <h4><i class="fas fa-running"></i> SportWear</h4>
+            <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 20px">
+              Chuyên cung cấp các sản phẩm thời trang thể thao chính hãng với
+              chất lượng cao và giá cả hợp lý.
+            </p>
+            <div class="social-links">
+              <a href="https://facebook.com" target="_blank"
+                ><i class="fab fa-facebook-f"></i
+              ></a>
+              <a href="https://instagram.com" target="_blank"
+                ><i class="fab fa-instagram"></i
+              ></a>
+              <a href="https://youtube.com" target="_blank"
+                ><i class="fab fa-youtube"></i
+              ></a>
+              <a href="https://zalo.me" target="_blank"
+                ><i class="fas fa-comment"></i
+              ></a>
+            </div>
+          </div>
+
+          <!-- Quick Links -->
+          <div class="footer-col">
+            <h4>Liên kết nhanh</h4>
+            <ul>
+              <li><a th:href="@{/}">Trang chủ</a></li>
+              <li><a th:href="@{/products}">Sản phẩm</a></li>
+              <li><a th:href="@{/about}">Giới thiệu</a></li>
+              <li><a th:href="@{/contact}">Liên hệ</a></li>
+              <li><a th:href="@{/blog}">Tin tức</a></li>
+            </ul>
+          </div>
+
+          <!-- Customer Service -->
+          <div class="footer-col">
+            <h4>Hỗ trợ khách hàng</h4>
+            <ul>
+              <li><a href="#">Hướng dẫn mua hàng</a></li>
+              <li><a href="#">Chính sách đổi trả</a></li>
+              <li><a href="#">Chính sách bảo hành</a></li>
+              <li><a href="#">Chính sách vận chuyển</a></li>
+              <li><a href="#">Câu hỏi thường gặp</a></li>
+            </ul>
+          </div>
+
+          <!-- Contact -->
+          <div class="footer-col">
+            <h4>Liên hệ</h4>
+            <ul>
+              <li>
+                <i class="fas fa-map-marker-alt" style="width: 20px"></i> 123
+                Đường ABC, Quận 1, TP.HCM
+              </li>
+              <li>
+                <i class="fas fa-phone" style="width: 20px"></i> 1900 1234
+              </li>
+              <li>
+                <i class="fas fa-envelope" style="width: 20px"></i>
+                support@sportwear.vn
+              </li>
+              <li>
+                <i class="fas fa-clock" style="width: 20px"></i> 8:00 - 22:00
+                (T2 - CN)
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>&copy; 2024 SportWear Shop. All rights reserved.</p>
+        </div>
+      </div>
+
+      <!-- Facebook Chat Plugin -->
+      <div id="fb-root"></div>
+      <script>
+        window.fbAsyncInit = function () {
+          FB.init({
+            xfbml: true,
+            version: "v18.0",
+          });
+        };
+        (function (d, s, id) {
+          var js,
+            fjs = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) return;
+          js = d.createElement(s);
+          js.id = id;
+          js.src =
+            "https://connect.facebook.net/vi_VN/sdk/xfbml.customerchat.js";
+          fjs.parentNode.insertBefore(js, fjs);
+        })(document, "script", "facebook-jssdk");
+      </script>
+      <!-- Your Facebook Page ID -->
+      <div
+        class="fb-customerchat"
+        attribution="setup_tool"
+        page_id="YOUR_PAGE_ID"
+      ></div>
+
+      <!-- Zalo Chat Widget -->
+      <div
+        class="zalo-chat-widget"
+        data-oaid="YOUR_ZALO_OA_ID"
+        data-welcome-message="Xin chào! Chúng tôi có thể giúp gì cho bạn?"
+        data-autopopup="0"
+        data-width="350"
+        data-height="420"
+      ></div>
+      <script src="https://sp.zalo.me/plugins/sdk.js"></script>
+    </footer>
+  </body>
+</html>

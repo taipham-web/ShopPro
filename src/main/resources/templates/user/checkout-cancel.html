@@ -1,0 +1,60 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hủy thanh toán - SportWear Shop</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      .cancel-container {
+        max-width: 500px;
+        margin: 60px auto;
+        text-align: center;
+        padding: 40px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      }
+      .cancel-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #ffc107, #fd7e14);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 24px;
+      }
+      .cancel-icon i { color: white; font-size: 2rem; }
+    </style>
+  </head>
+  <body>
+    <div th:replace="~{fragments/header :: header}"></div>
+    <section class="section">
+      <div class="container">
+        <div class="cancel-container">
+          <div class="cancel-icon">
+            <i class="fas fa-times"></i>
+          </div>
+          <h1 style="font-size: 1.6rem; color: #fd7e14; margin-bottom: 12px;">Thanh toán bị hủy</h1>
+          <p style="color: #6c757d; margin-bottom: 30px;">
+            Bạn đã hủy quá trình thanh toán. Đơn hàng của bạn chưa được xử lý.
+          </p>
+          <div style="display: flex; gap: 12px; justify-content: center;">
+            <a th:href="@{/checkout}" class="btn btn-primary">
+              <i class="fas fa-arrow-left"></i> Quay lại thanh toán
+            </a>
+            <a th:href="@{/cart}" class="btn btn-outline-secondary">
+              <i class="fas fa-shopping-cart"></i> Xem giỏ hàng
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+  </body>
+</html>
