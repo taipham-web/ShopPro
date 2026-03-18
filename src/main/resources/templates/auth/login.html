@@ -5,16 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Đăng nhập - SportWear Shop</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
     <style>
-      * { box-sizing: border-box; margin: 0; padding: 0; }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
       body {
         min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
         background: #1a1a2e;
-        font-family: 'Segoe UI', system-ui, sans-serif;
+        font-family: "Segoe UI", system-ui, sans-serif;
       }
       .auth-wrapper {
         display: flex;
@@ -23,7 +30,7 @@
         min-height: 560px;
         border-radius: 20px;
         overflow: hidden;
-        box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
       }
       /* ---- LEFT BANNER ---- */
       .auth-banner {
@@ -42,7 +49,7 @@
         position: absolute;
         top: 16px;
         left: 16px;
-        color: rgba(255,255,255,0.75);
+        color: rgba(255, 255, 255, 0.75);
         font-size: 0.8rem;
         text-decoration: none;
         display: flex;
@@ -51,7 +58,9 @@
         z-index: 5;
         transition: color 0.2s;
       }
-      .auth-banner-back:hover { color: #fff; }
+      .auth-banner-back:hover {
+        color: #fff;
+      }
 
       /* ---- RIGHT FORM ---- */
       .auth-form-side {
@@ -84,9 +93,19 @@
         align-items: center;
         gap: 8px;
       }
-      .auth-alert-danger { background: #fff0f0; color: #c0392b; border: 1px solid #f5c6cb; }
-      .auth-alert-success { background: #f0fff4; color: #27ae60; border: 1px solid #b7ebc8; }
-      .auth-field { margin-bottom: 18px; }
+      .auth-alert-danger {
+        background: #fff0f0;
+        color: #c0392b;
+        border: 1px solid #f5c6cb;
+      }
+      .auth-alert-success {
+        background: #f0fff4;
+        color: #27ae60;
+        border: 1px solid #b7ebc8;
+      }
+      .auth-field {
+        margin-bottom: 18px;
+      }
       .auth-field-label {
         font-size: 0.8rem;
         font-style: italic;
@@ -111,7 +130,9 @@
         text-decoration: none;
         font-style: italic;
       }
-      .auth-field-label-row a:hover { text-decoration: underline; }
+      .auth-field-label-row a:hover {
+        text-decoration: underline;
+      }
       .auth-input-wrap {
         display: flex;
         align-items: center;
@@ -120,7 +141,9 @@
         padding: 0 14px;
         gap: 10px;
         border: 1.5px solid transparent;
-        transition: border-color 0.2s, background 0.2s;
+        transition:
+          border-color 0.2s,
+          background 0.2s;
       }
       .auth-input-wrap:focus-within {
         background: #fff;
@@ -151,12 +174,73 @@
         font-weight: 700;
         cursor: pointer;
         margin-top: 8px;
-        transition: background 0.2s, transform 0.2s;
+        transition:
+          background 0.2s,
+          transform 0.2s;
         letter-spacing: 0.3px;
       }
       .auth-btn:hover {
         background: #0041a8;
         transform: translateY(-1px);
+      }
+      .auth-divider {
+        margin: 18px 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: #98a2b3;
+        font-size: 0.8rem;
+      }
+      .auth-divider::before,
+      .auth-divider::after {
+        content: "";
+        height: 1px;
+        background: #e5e7eb;
+        flex: 1;
+      }
+      .social-auth {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 14px;
+      }
+      .social-btn {
+        width: 46px;
+        height: 46px;
+        border: 1px solid #d0d5dd;
+        border-radius: 50%;
+        padding: 0;
+        text-decoration: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: all 0.2s;
+      }
+      .social-btn i {
+        font-size: 1.15rem;
+      }
+      .social-btn:hover {
+        transform: translateY(-1px);
+      }
+      .social-btn-google {
+        color: #1f2937;
+        background: #ffffff;
+      }
+      .social-btn-google i {
+        color: #db4437;
+      }
+      .social-btn-google:hover {
+        border-color: #c9ced6;
+        background: #f9fafb;
+      }
+      .social-btn-facebook {
+        color: white;
+        background: #1877f2;
+        border-color: #1877f2;
+      }
+      .social-btn-facebook:hover {
+        background: #1669d8;
+        border-color: #1669d8;
       }
       .auth-footer-text {
         text-align: center;
@@ -170,12 +254,25 @@
         text-decoration: none;
         margin-left: 4px;
       }
-      .auth-footer-text a:hover { text-decoration: underline; }
+      .auth-footer-text a:hover {
+        text-decoration: underline;
+      }
 
       @media (max-width: 640px) {
-        .auth-banner { display: none; }
-        .auth-form-side { width: 100%; padding: 36px 24px; }
-        .auth-wrapper { border-radius: 12px; }
+        .auth-banner {
+          display: none;
+        }
+        .auth-form-side {
+          width: 100%;
+          padding: 36px 24px;
+        }
+        .auth-wrapper {
+          border-radius: 12px;
+        }
+        .social-btn {
+          width: 44px;
+          height: 44px;
+        }
       }
     </style>
   </head>
@@ -186,7 +283,10 @@
         <a th:href="@{/}" class="auth-banner-back">
           <i class="fas fa-arrow-left"></i> Trang chủ
         </a>
-        <img th:src="@{/images/login-banner.png}" alt="Never Give Up - SportWear" />
+        <img
+          th:src="@{/images/login-banner.png}"
+          alt="Never Give Up - SportWear"
+        />
       </div>
 
       <!-- RIGHT: Login Form -->
@@ -196,13 +296,15 @@
 
         <!-- Alerts -->
         <div th:if="${param.error}" class="auth-alert auth-alert-danger">
-          <i class="fas fa-exclamation-circle"></i> Email hoặc mật khẩu không đúng!
+          <i class="fas fa-exclamation-circle"></i> Email hoặc mật khẩu không
+          đúng!
         </div>
         <div th:if="${param.logout}" class="auth-alert auth-alert-success">
           <i class="fas fa-check-circle"></i> Đăng xuất thành công!
         </div>
         <div th:if="${param.registered}" class="auth-alert auth-alert-success">
-          <i class="fas fa-check-circle"></i> Đăng ký thành công! Vui lòng đăng nhập.
+          <i class="fas fa-check-circle"></i> Đăng ký thành công! Vui lòng đăng
+          nhập.
         </div>
         <div th:if="${success}" class="auth-alert auth-alert-success">
           <i class="fas fa-check-circle"></i> <span th:text="${success}"></span>
@@ -214,7 +316,12 @@
             <label class="auth-field-label">Email Address</label>
             <div class="auth-input-wrap">
               <i class="fas fa-envelope"></i>
-              <input type="email" name="email" placeholder="yourname@email.com" required />
+              <input
+                type="email"
+                name="email"
+                placeholder="yourname@email.com"
+                required
+              />
             </div>
           </div>
 
@@ -226,12 +333,37 @@
             </div>
             <div class="auth-input-wrap">
               <i class="fas fa-lock"></i>
-              <input type="password" name="password" placeholder="••••••••" required />
+              <input
+                type="password"
+                name="password"
+                placeholder="••••••••"
+                required
+              />
             </div>
           </div>
 
           <button type="submit" class="auth-btn">Đăng nhập</button>
         </form>
+
+        <div class="auth-divider">hoặc</div>
+        <div class="social-auth">
+          <a
+            th:href="@{/oauth2/authorization/google}"
+            class="social-btn social-btn-google"
+            title="Đăng nhập với Google"
+            aria-label="Đăng nhập với Google"
+          >
+            <i class="fab fa-google"></i>
+          </a>
+          <a
+            th:href="@{/oauth2/authorization/facebook}"
+            class="social-btn social-btn-facebook"
+            title="Đăng nhập với Facebook"
+            aria-label="Đăng nhập với Facebook"
+          >
+            <i class="fab fa-facebook-f"></i>
+          </a>
+        </div>
 
         <p class="auth-footer-text">
           Chưa có tài khoản?

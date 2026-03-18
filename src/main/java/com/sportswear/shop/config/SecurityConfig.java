@@ -1,5 +1,6 @@
 package com.sportswear.shop.config;
 
+import com.sportswear.shop.service.impl.CustomOAuth2UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -51,12 +52,14 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                                   CustomOAuth2UserService customOAuth2UserService) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/home", "/products/**", "/brands/**", "/categories/**", "/about", "/contact").permitAll()
                 .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                 .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
                 .requestMatchers("/paypal/**").authenticated()
                 .requestMatchers("/vnpay/**").authenticated()
                 .requestMatchers("/momo/**").authenticated()
@@ -72,6 +75,14 @@ public class SecurityConfig {
                 .successHandler(customSuccessHandler())
                 .failureUrl("/auth/login?error=true")
                 .permitAll()
+            )
+            .oauth2Login(oauth2 -> oauth2
+                .loginPage("/auth/login")
+                .userInfoEndpoint(userInfo -> userInfo
+                    .userService(customOAuth2UserService)
+                )
+                .successHandler(customSuccessHandler())
+                .failureUrl("/auth/login?error=true")
             )
             .logout(logout -> logout
                 .logoutUrl("/auth/logout")
